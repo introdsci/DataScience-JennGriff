@@ -1,0 +1,100 @@
+---
+title: "Human Development Analysis"
+subtitle: "Jenn Griffiths's Data Science Portfolio" 
+output: html_notebook
+---
+#Install Libraries
+```{r}
+#install.packages("tidyverse")
+library(tidyverse)
+library(readr)
+library(dplyr)
+library(tidyr)
+```
+#Load the Data
+```{r}
+HDI <- read_csv("Data/HDI.csv")
+Continent_HDI <- read_csv("Data/Continent_HDI.csv")
+Indicators <- read_csv("Data/Indicators.csv")
+```
+#View the Dataframes
+```{r}
+View(Continent_HDI)
+View(HDI)
+View(Indicators)
+```
+#Inspecting the Data
+```{r}
+#Count of rows
+nrow(Indicators)
+#Count of columns
+ncol(Indicators)
+#List the variables in dataframe
+names(Indicators)
+```
+>Summary Statistics
+
+```{r}
+summary(Indicators)
+```
+>List the structure of dataframe
+
+```{r}
+glimpse(Indicators)
+```
+#Tidy data for Indicators dataframe
+>Change variable 'dimension' to a factor
+
+```{r}
+Indicators$dimension <-as.factor(Indicators$dimension)
+
+#Display levels in 'dimension' variable
+levels(Indicators$dimension)
+```
+>Change variable 'indicator_name' to a factor
+
+```{r}
+Indicators$indicator_name <-as.factor(Indicators$indicator_name)
+
+#Display levels in 'indicator_name' variable
+levels(Indicators$indicator_name)
+```
+>Change variable 'country_name' to a factor
+
+```{r}
+Indicators$country_name <-as.factor(Indicators$country_name)
+
+#Display levels in 'country_name' variable
+levels(Indicators$country_name)
+```
+>Change variable 'indicator_id' to a factor
+
+```{r}
+Indicators$indicator_id <-as.factor(Indicators$indicator_id)
+
+#Display levels in 'indicator_id' variable
+levels(Indicators$indicator_id)
+```
+>Change variable 'iso3' to a factor
+
+```{r}
+Indicators$iso3 <-as.factor(Indicators$iso3)
+
+#Display levels in 'iso3' variable
+levels(Indicators$iso3)
+```
+>Verify the structure of dataframe
+
+```{r}
+glimpse(Indicators)
+```
+
+#Adressing large amount of 'missing' data
+```{r}
+#is.na(Indicators)
+Indicators[!complete.cases(Indicators),]
+
+#create new dataset without missing data
+Indicator_noNa<-na.omit(Indicators)
+glimpse(Indicator_noNa)
+```
