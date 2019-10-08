@@ -10,6 +10,7 @@ library(tidyverse)
 library(readr)
 library(dplyr)
 library(tidyr)
+library(ggplot2)
 ```
 #Load the Data
 ```{r}
@@ -88,13 +89,30 @@ levels(Indicators$iso3)
 ```{r}
 glimpse(Indicators)
 ```
+#Gather year columns
+```{r}
+Indicators <-gather(Indicator_noNa, key = Years, "1990", "1991", "1992", "1993", "1994", "1995", "1996", "1997", "1998","1999", "2000", "2001", "2002","2003","2004","2005","2006", "2007","2008","2009","2010","2011","2012","2013","2014","2015", "2016", "2017","9999")
 
+#rename last column to rating
+colnames(Indicators)[colnames(Indicators) == "1990" ] <- "HDI_value"
+```
 #Adressing large amount of 'missing' data
 ```{r}
 #is.na(Indicators)
-Indicators[!complete.cases(Indicators),]
+#Indicators[!complete.cases(Indicators),]
 
 #create new dataset without missing data
-Indicator_noNa<-na.omit(Indicators)
-glimpse(Indicator_noNa)
+#Indicator_noNa<-na.omit(Indicators)
+#glimpse(Indicator_noNa)
+```
+#Creating Tibbles
+
+```{r}
+
+```
+
+#Data Visalization
+```{r}
+#Synatx: ggplot(dataframe, aes(x, y, ...))
+ggplot(Indicator_noNa, aes() )
 ```
