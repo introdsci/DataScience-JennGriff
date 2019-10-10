@@ -144,21 +144,24 @@ Tib_FinancialFlows <- tibble(indicator = Financial_flows$indicator_name, country
   #Work Vulnerability Tibble
 Tib_WorkVulnerability <- tibble(indicator = Work_vulnerability$indicator_name, country = Work_vulnerability$country_name, year = Work_vulnerability$Years, HDI_value = Work_vulnerability$HDI_value)
 ```
+>There are still a lot of missing values (NA in a cell). For now we will leave them in, but an important tool to use when analyzing the data is the function to remove NA vlues from the calculations:
+>>na.rm = TRUE
+
 #Now Its Time For STEP ZERO: Plot The Data
 Nothing gives you a better perspective on your data than plotting your data. 
+
+###Bar Chart accross 2 variable
+At first glace the two tall bars in the center look as though there is something weird going on here. In looking into the tibble, it is evident that the HDI_value is scoring each indicator with different units. Most scores are in context of percentages, whereas the two tall bars are in terms of headcounts of certain population groups. This leads to the conclusion that these tibbles need to be sliced again base on the indicators in order for the HDI_values in a tibble to be in the same units.
+```{r}
+ggplot(Tib_Poverty, aes(indicator, HDI_value) ) + geom_col() + geom_path(colour = "red", na.rm = TRUE)
+```
+###Bar Chart
 Looking at distributions of a single variable
-```{r}
-#Synatx: ggplot(dataframe, aes(x, y, ...))
-
-ggplot(Tib_Poverty, aes(indicator, HDI_value) ) + geom_boxplot() + geom_path(colour = "red")
-```
-
+The assumption would be that there is an even spread of the amount of indicators across the dataset but here we see there a subtle dip the a rise at the far right of the bar graph. 
+>Is this due to the missing data being removed? Or possibly some other reason for the uneven distribution?
 
 ```{r}
-chart<- ggplot(Tib_Poverty, aes())
-chart + geom_dotplot()
+chart<- ggplot(Tib_Poverty, aes(indicator), na.rm = TRUE)
+chart + geom_bar()
 ```
 
-```{r}
-
-```
