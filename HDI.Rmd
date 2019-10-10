@@ -3,7 +3,14 @@ title: "Human Development Analysis"
 subtitle: "Jenn Griffiths's Data Science Portfolio" 
 output: html_notebook
 ---
+#########################################
+# ADD description of what and why under headers
+
+# Output what code does (ex. tibble, )
+#########################################
+
 #Install Libraries
+These libraries allow us to use the various functions within this document
 ```{r}
 #install.packages("tidyverse")
 library(tidyverse)
@@ -13,16 +20,14 @@ library(tidyr)
 library(ggplot2)
 ```
 #Load the Data
+Loading the original data into the analysis environment. The original data will not be altered. Versions of the data are created in this environment which can be freely manipulated. If an alteration, such as a removal of a column, was a mistake - one can always reload the original data. 
 ```{r}
-HDI <- read_csv("Data/HDI.csv")
-Continent_HDI <- read_csv("Data/Continent_HDI.csv")
 Indicators <- read_csv("Data/Indicators.csv")
 ```
 #View the Dataframes
+This function will show us the top 6 rows of the dataframe in order to give us an idea of the structure of table. 
 ```{r}
-View(Continent_HDI)
-View(HDI)
-View(Indicators)
+head(Indicators)
 ```
 #Inspecting the Data
 ```{r}
@@ -30,21 +35,17 @@ View(Indicators)
 nrow(Indicators)
 #Count of columns
 ncol(Indicators)
-#List the variables in dataframe
+#List of the columns in the dataframe
 names(Indicators)
 ```
->Summary Statistics
-
-```{r}
-summary(Indicators)
-```
->List the structure of dataframe
-
+With the following function, we can get a look at the number of Observations(rows) and variables(columns). In this glimpse of the data, there is an indication that there is a lot of missing data (listed as NA). 
 ```{r}
 glimpse(Indicators)
 ```
-#Tidy data for Indicators dataframe
->Change variable 'dimension' to a factor
+#Tidy The Data
+Tidying the data is an important part of preparing your data for analysis. Making your data tidy can be time consuming but it makes the format of your data consistent and easier to manage when you're analyzing the data.
+###Categorical Varibles
+Change variable 'dimension' to a categorical variable, meaning there are only a certain number of values it could possibly be. This will help with analysis later. 
 
 ```{r}
 Indicators$dimension <-as.factor(Indicators$dimension)
@@ -52,7 +53,7 @@ Indicators$dimension <-as.factor(Indicators$dimension)
 #Display levels in 'dimension' variable
 levels(Indicators$dimension)
 ```
->Change variable 'indicator_name' to a factor
+>Change variable 'indicator_name' to a categorical variable
 
 ```{r}
 Indicators$indicator_name <-as.factor(Indicators$indicator_name)
@@ -60,7 +61,7 @@ Indicators$indicator_name <-as.factor(Indicators$indicator_name)
 #Display levels in 'indicator_name' variable
 levels(Indicators$indicator_name)
 ```
->Change variable 'country_name' to a factor
+>Change variable 'country_name' to a categorical variable
 
 ```{r}
 Indicators$country_name <-as.factor(Indicators$country_name)
@@ -68,51 +69,69 @@ Indicators$country_name <-as.factor(Indicators$country_name)
 #Display levels in 'country_name' variable
 levels(Indicators$country_name)
 ```
->Change variable 'indicator_id' to a factor
+>Change variable 'indicator_id' to a categorical variable
 
 ```{r}
 Indicators$indicator_id <-as.factor(Indicators$indicator_id)
-
-#Display levels in 'indicator_id' variable
-levels(Indicators$indicator_id)
 ```
->Change variable 'iso3' to a factor
+>Change variable 'iso3' to a categorical variable
 
 ```{r}
 Indicators$iso3 <-as.factor(Indicators$iso3)
-
-#Display levels in 'iso3' variable
-levels(Indicators$iso3)
 ```
 >Verify the structure of dataframe
 
 ```{r}
 glimpse(Indicators)
 ```
-#Gather year columns
+###Gather year columns
+An important feature of tidy data is that "each variable must have its own column" As in the variable years should be in a single column. This is done because it makes transforming the data a much smoother process. 
 ```{r}
-Indicators <-gather(Indicator_noNa, key = Years, "1990", "1991", "1992", "1993", "1994", "1995", "1996", "1997", "1998","1999", "2000", "2001", "2002","2003","2004","2005","2006", "2007","2008","2009","2010","2011","2012","2013","2014","2015", "2016", "2017","9999")
+Indicators <-gather(Indicators, key = Years, "1990", "1991", "1992", "1993", "1994", "1995", "1996", "1997", "1998","1999", "2000", "2001", "2002","2003","2004","2005","2006", "2007","2008","2009","2010","2011","2012","2013","2014","2015", "2016", "2017","9999")
 
 #rename last column to rating
 colnames(Indicators)[colnames(Indicators) == "1990" ] <- "HDI_value"
 ```
-#Adressing large amount of 'missing' data
-```{r}
-#is.na(Indicators)
-#Indicators[!complete.cases(Indicators),]
+#Subset the data based on 'dimensions' category
+To break up the data by 'dimesions', we mush take subsets of the original table. It is good practice to have each table be one thing, rather than a collection of everything. Dimensions in this dataset are the category under which the Human Development Index is scored. For example dimensions include education, health, demographics, and so on. 
 
-#create new dataset without missing data
-#Indicator_noNa<-na.omit(Indicators)
-#glimpse(Indicator_noNa)
+```{r}
+Composite_indices <- subset(Indicators, dimension == "Composite indices" )
+Demography <- subset(Indicators, dimension == "Demography" )
+Education <- subset(Indicators, dimension == "Education" )
+Environmental_sustainability <- subset(Indicators, dimension == "Environmental sustainability" )
+Gender <- subset(Indicators, dimension == "Gender" )
+Health <- subset(Indicators, dimension == "Health" )
+Human_Security <- subset(Indicators, dimension == "Human Security" )
+Income_resources <- subset(Indicators, dimension == "Income/composition of resources" )
+Inequality <- subset(Indicators, dimension == "Inequality" )
+Mobility_communication <- subset(Indicators, dimension == "Mobility and communication" )
+Poverty <- subset(Indicators, dimension == "Poverty" )
+Sustainability <- subset(Indicators, dimension == "Socio-economic sustainability" )
+Financial_flows <- subset(Indicators, dimension == "Trade and financial flows" )
+Work_vulnerability <- subset(Indicators, dimension == "Work, employment and vulnerability" )
 ```
 #Creating Tibbles
-
+A tibble is a subset table from a larger table (Rows and columns of data). Creating a tibble for each 'dimension, or category for which the Humand Development Index was calculated
 ```{r}
 
 ```
 
 #Data Visalization
+Looking at distributions of a single variable
+
 ```{r}
 #Synatx: ggplot(dataframe, aes(x, y, ...))
-ggplot(Indicator_noNa, aes() )
+
+ggplot(Poverty, aes(Years, HDI_value) ) + geom_boxplot() + geom_path(colour = "red")
+```
+
+
+```{r}
+chart<- ggplot(Poverty, aes(HDI_value))
+chart + geom_dotplot()
+```
+
+```{r}
+
 ```
