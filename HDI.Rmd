@@ -4,7 +4,7 @@ subtitle: Jenn Griffiths's Data Science Portfolio
 output:
   html_document:
     keep_md: true
-    df_print: paged
+   
 ---
 #Install Libraries
 These libraries allow us to use the various functions within this document
