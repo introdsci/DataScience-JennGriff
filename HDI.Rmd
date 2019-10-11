@@ -3,6 +3,7 @@ title: "Human Development Analysis"
 subtitle: Jenn Griffiths's Data Science Portfolio
 output:
   html_document:
+    keep_md: true
     df_print: paged
 ---
 #Install Libraries
