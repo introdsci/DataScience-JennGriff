@@ -4,38 +4,35 @@ subtitle: "Jenn Griffiths's Data Science Portfolio"
 output:
   html_document:
     df_print: paged
----
-#########################################
 
-    In an Introduction, describe your motivation for choosing the general topic of your portfolio.
-    Identify your initial data set that you will be using. The data set should have at least:
-        at least 1000 observations
-        at least 10 variables
-        ...of which at least 3 are categorical
-        ...and at least 7 are continuous
-    Describe your source, using critical analysis to assess the quality (and possible limitations) of it
-    Document your variables and describe in plain language what they mean and how they are represented
-    Document any manipulations you make to clean your data and organize it as Tidy Data as best you can prepare it for data analysis and modeling
-    Summarize your data using descriptive statistics, along with visualizations (with accompanying interpretations) that help explore what possible insights you might investigate.
     Finally, describe what research questions you hope to explore in later phases, along with potential social & ethical implications of your work. For help identifying and phrasing research questions, see How to Write a Research Question
 
-#########################################
 ## Introduction
   The decision to use the Human Development Index (HDI) dataset is motivated by a desire to learn about the different conditions under which people live. 
 
 ### Data Source: United Nations Development Programme
-> http://hdr.undp.org/en/content/human-development-index-hdi
+>* DataSet: Indicators.csv  
+* Observations: 25636  
+* Variables: 34  
+* http://hdr.undp.org/en/content/human-development-index-hdi
 
-  The Human Development Index was developed by the United Nations in order to assess the development of a country on more factors than economics alone. Additional factors include such things as life expectancy at birth, education level, and percentage of the population employed. The overall Human Development Index for a country is calculated across 14 different dimensions (e.g. Education, Health, Poverty, etc.) then combined to get the overall index score. 
+  The Human Development Index was developed by the United Nations in order to assess the development of a country on more factors than economics alone. Additional factors include such things as life expectancy at birth, education level, and percentage of the population employed. The overall Human Development Index for a country is calculated across 14 different dimensions (e.g. Education, Health, Poverty, etc.) then combined to get the overall index score. There are a lot of missing values and the HDI scores are in vastly diffdrent units in one column. The calculations go get these scores are fairly complex and would be very time consuming to reverse engineer the mathematics to validate its accuracy.  
+  
 ### Variables
+ >[1] **"dimension":**                   The Category of the HDI score  
+ [2] **"indicator_id":**                 Unique ID number for class of indicator  
+ [3] **"indicator_name":**               Sub-category of the dimension variable  
+ [4] **"iso3":**                         Country code  
+ [5] **"country_name":**                 Name of a country  
+ [6 - 33] **"1990" -  "2017":**          Years  
+ [34] **"9999":**                        Undefined HDI score    
 
 ## Abstract
 
-In under 250 words give a brief summary of the project so far.
+The project so far has been primarily exploration, and attempts to tidy the data. So far I have created a subset table for each dimension, then created a tibble for each indicator within a given dimension.
 
 ### 1. Discovery and Data Preparation
-
-Provide a one-sentence introduction with what is covered by the first deliverable along with a link to another html page that gives the details.
+Below is the link to the current project. 
 ```{r}
 
 ```
