@@ -4,11 +4,9 @@ subtitle: "Jenn Griffiths's Data Science Portfolio"
 output:
   html_document:
     df_print: paged
-
-    Finally, describe what research questions you hope to explore in later phases, along with potential social & ethical implications of your work. For help identifying and phrasing research questions, see How to Write a Research Question
-
-## Introduction
-  The decision to use the Human Development Index (HDI) dataset is motivated by a desire to learn about the different conditions under which people live. 
+---
+# Introduction
+  The decision to use the Human Development Index (HDI) data set is motivated by a desire to learn about the different conditions under which people live. 
 
 ### Data Source: United Nations Development Programme
 >* DataSet: Indicators.csv  
@@ -16,20 +14,28 @@ output:
 * Variables: 34  
 * http://hdr.undp.org/en/content/human-development-index-hdi
 
-  The Human Development Index was developed by the United Nations in order to assess the development of a country on more factors than economics alone. Additional factors include such things as life expectancy at birth, education level, and percentage of the population employed. The overall Human Development Index for a country is calculated across 14 different dimensions (e.g. Education, Health, Poverty, etc.) then combined to get the overall index score. There are a lot of missing values and the HDI scores are in vastly diffdrent units in one column. The calculations go get these scores are fairly complex and would be very time consuming to reverse engineer the mathematics to validate its accuracy.  
+  The Human Development Index was developed by the United Nations in order to assess the development of a country on more factors than economics alone. Additional factors include such things as life expectancy at birth, education level, and percentage of the population employed. The overall Human Development Index for a country is calculated across 14 different dimensions (e.g. Education, Health, Poverty, etc.) then combined to get the overall index score. There are a lot of missing values and the HDI scores are in vastly different units in one column. The calculations go get these scores are fairly complex and would be very time consuming to reverse engineer the mathematics to validate their accuracy.  
   
 ### Variables
  >[1] **"dimension":**                   The Category of the HDI score  
  [2] **"indicator_id":**                 Unique ID number for class of indicator  
- [3] **"indicator_name":**               Sub-category of the dimension variable  
+ [3] **"indicator_name":**               Subcategory of the dimension variable  
  [4] **"iso3":**                         Country code  
  [5] **"country_name":**                 Name of a country  
  [6 - 33] **"1990" -  "2017":**          Years  
  [34] **"9999":**                        Undefined HDI score    
-
+ 
 ## Abstract
+The project so far has been primarily exploration and attempts to tidy the data. So far I have created a subset table for each dimension, then created a tibble for each indicator within a given dimension.  
 
-The project so far has been primarily exploration, and attempts to tidy the data. So far I have created a subset table for each dimension, then created a tibble for each indicator within a given dimension.
+###Research Questions:
+Studies have made the case that agriculture is a significant factor in a countries populations quality of life. Many areas have been reported as strongly correlated  such as rates of poverty, employment, education level, and population density. In many of these countries the issue is not as simple as needing equipment, training, or supplies. Many charitable programs give food, training, and equipment but this band-aid does not actually lead to a country becoming self-sufficient - rather they become more dependent. You can give a farmer a tractor, but they may not have access to a reliable source of diesel. You can train farmers modern sustainable farming, but the culture of the specific group needs to be considered in order have the specific group intrinsically motivated to implement improvements that fit in their culture and are practical to their lives. 
+
+1. How significant is a countries agricultural production (In terms of producing: not enough, enough, or more than enough for their population) to the overall well being of the population. 
+
+2. What living standards and practices are common among countries with low output agriculture?
+
+
 
 ### 1. Discovery and Data Preparation
 Below is the link to the current project. 
