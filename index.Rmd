@@ -35,8 +35,6 @@ Studies have made the case that agriculture is a significant factor in a countri
 
 2. What living standards and practices are common among countries with low output agriculture?
 
-
-
 ### 1. Discovery and Data Preparation
 Below is the link to the current project. 
 ```{r}
