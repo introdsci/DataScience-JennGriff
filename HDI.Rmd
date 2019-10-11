@@ -1,17 +1,13 @@
 ---
 title: "Human Development Analysis"
-subtitle: "Jenn Griffiths's Data Science Portfolio" 
-output: html_notebook
+subtitle: Jenn Griffiths's Data Science Portfolio
+output:
+  html_document:
+    df_print: paged
 ---
-#########################################
-# ADD description of what and why under headers
-
-# Output what code does (ex. tibble, )
-#########################################
-
 #Install Libraries
 These libraries allow us to use the various functions within this document
-```{r}
+```{r message=FALSE, warning=FALSE}
 #install.packages("tidyverse")
 library(tidyverse)
 library(readr)
@@ -25,7 +21,7 @@ Loading the original data into the analysis environment. The original data will 
 Indicators <- read_csv("Data/Indicators.csv")
 ```
 #View the Dataframes
-This function will show us the top 6 rows of the dataframe in order to give us an idea of the structure of table. 
+This function will show us the top 6 rows of the data frame in order to give us an idea of the structure of table. 
 ```{r}
 head(Indicators)
 ```
@@ -35,23 +31,22 @@ head(Indicators)
 nrow(Indicators)
 #Count of columns
 ncol(Indicators)
-#List of the columns in the dataframe
-names(Indicators)
 ```
-With the following function, we can get a look at the number of Observations(rows) and variables(columns). In this glimpse of the data, there is an indication that there is a lot of missing data (listed as NA). 
+###List of the variables in the dataframe
 ```{r}
-glimpse(Indicators)
+names(Indicators)
 ```
 #Tidy The Data
 Tidying the data is an important part of preparing your data for analysis. Making your data tidy can be time consuming but it makes the format of your data consistent and easier to manage when you're analyzing the data.
-###Categorical Varibles
+
+###Categorical Variables
 Change variable 'dimension' to a categorical variable, meaning there are only a certain number of values it could possibly be. This will help with analysis later. 
 
 ```{r}
 Indicators$dimension <-as.factor(Indicators$dimension)
 
-#Display levels in 'dimension' variable
-levels(Indicators$dimension)
+#Display number of levels in 'dimension' variable
+nlevels(Indicators$dimension)
 ```
 >Change variable 'indicator_name' to a categorical variable
 
@@ -59,7 +54,7 @@ levels(Indicators$dimension)
 Indicators$indicator_name <-as.factor(Indicators$indicator_name)
 
 #Display levels in 'indicator_name' variable
-levels(Indicators$indicator_name)
+nlevels(Indicators$indicator_name)
 ```
 >Change variable 'country_name' to a categorical variable
 
@@ -67,7 +62,7 @@ levels(Indicators$indicator_name)
 Indicators$country_name <-as.factor(Indicators$country_name)
 
 #Display levels in 'country_name' variable
-levels(Indicators$country_name)
+nlevels(Indicators$country_name)
 ```
 >Change variable 'indicator_id' to a categorical variable
 
@@ -79,11 +74,6 @@ Indicators$indicator_id <-as.factor(Indicators$indicator_id)
 ```{r}
 Indicators$iso3 <-as.factor(Indicators$iso3)
 ```
->Verify the structure of dataframe
-
-```{r}
-glimpse(Indicators)
-```
 ###Gather year columns
 An important feature of tidy data is that "each variable must have its own column" As in the variable years should be in a single column. This is done because it makes transforming the data a much smoother process. 
 ```{r}
@@ -93,7 +83,7 @@ Indicators <-gather(Indicators, key = Years, "1990", "1991", "1992", "1993", "19
 colnames(Indicators)[colnames(Indicators) == "1990" ] <- "HDI_value"
 ```
 #Subset the data based on 'dimensions' category
-To break up the data by 'dimesions', we mush take subsets of the original table. It is good practice to have each table be one thing, rather than a collection of everything. Dimensions in this dataset are the category under which the Human Development Index is scored. For example dimensions include education, health, demographics, and so on. 
+To break up the data by 'dimensions', we must take subsets of the original table. It is good practice to have each table be one thing, rather than a collection of everything. Dimensions in this data set are the category under which the Human Development Index is scored. For example dimensions include education, health, demographics, and so on. 
 
 ```{r}
 Composite_indices <- subset(Indicators, dimension == "Composite indices" )
@@ -112,7 +102,7 @@ Financial_flows <- subset(Indicators, dimension == "Trade and financial flows" )
 Work_vulnerability <- subset(Indicators, dimension == "Work, employment and vulnerability" )
 ```
 #Creating Tibbles
-A tibble is a subset table from a larger table (Rows and columns of data). Creating a tibble for each 'dimension, or category for which the Humand Development Index was calculated.
+A tibble is a subset table from a larger table (Rows and columns of data). Creating a tibble for each 'dimension, or category for which the Human Development Index was calculated.
 Here we are creating a tibble from each of the subset tables. 
 ```{r}
   #Composite Indices Tibble
@@ -121,7 +111,7 @@ Tib_CompositeIndices <- tibble(indicator = Composite_indices$indicator_name, cou
 Tib_Demography <- tibble(indicator = Demography$indicator_name, country = Demography$country_name, year = Demography$Years, HDI_value = Demography$HDI_value)
   #Education Tibble
 Tib_Education <- tibble(indicator = Education$indicator_name, country = Education$country_name, year = Education$Years, HDI_value = Education$HDI_value)
-  #Environmenta lSustainability Tibble
+  #Environmental Sustainability Tibble
 Tib_EnvironmentalSustainability <- tibble(indicator = Environmental_sustainability$indicator_name, country = Environmental_sustainability$country_name, year = Environmental_sustainability$Years, HDI_value = Environmental_sustainability$HDI_value)
   #Gender Tibble
 Tib_Gender <- tibble(indicator = Gender$indicator_name, country = Gender$country_name, year = Gender$Years, HDI_value = Gender$HDI_value)
@@ -144,24 +134,35 @@ Tib_FinancialFlows <- tibble(indicator = Financial_flows$indicator_name, country
   #Work Vulnerability Tibble
 Tib_WorkVulnerability <- tibble(indicator = Work_vulnerability$indicator_name, country = Work_vulnerability$country_name, year = Work_vulnerability$Years, HDI_value = Work_vulnerability$HDI_value)
 ```
->There are still a lot of missing values (NA in a cell). For now we will leave them in, but an important tool to use when analyzing the data is the function to remove NA vlues from the calculations:
->>na.rm = TRUE
+>There are still a lot of missing values (NA in a cell). For now we will leave them in, but an important tool to use when analyzing the data is the function to remove NA values from the calculations:  
+<center> **na.rm = TRUE** </center>
 
-#Now Its Time For STEP ZERO: Plot The Data
+#Now It's Time For STEP ZERO: Plot The Data
 Nothing gives you a better perspective on your data than plotting your data. 
 
-###Bar Chart accross 2 variable
-At first glace the two tall bars in the center look as though there is something weird going on here. In looking into the tibble, it is evident that the HDI_value is scoring each indicator with different units. Most scores are in context of percentages, whereas the two tall bars are in terms of headcounts of certain population groups. This leads to the conclusion that these tibbles need to be sliced again base on the indicators in order for the HDI_values in a tibble to be in the same units.
+###Bar Chart across 2 variable
+At first glance the two tall bars in the center look as though there is something weird going on here. In looking into the tibble, it is evident that the HDI_value is scoring each indicator with different units. Most scores are in context of percentages, whereas the two tall bars are in terms of headcounts of certain population groups. This leads to the conclusion that these tibbles need to be sliced again based on the indicators in order for the HDI_values in a tibble to be in the same units.
 ```{r}
 ggplot(Tib_Poverty, aes(indicator, HDI_value) ) + geom_col() + geom_path(colour = "red", na.rm = TRUE)
 ```
+
 ###Bar Chart
 Looking at distributions of a single variable
-The assumption would be that there is an even spread of the amount of indicators across the dataset but here we see there a subtle dip the a rise at the far right of the bar graph. 
->Is this due to the missing data being removed? Or possibly some other reason for the uneven distribution?
+The assumption would be that there is an even spread of the amount of indicators across the data set but here we see there a subtle dip then a rise at the far right of the bar graph. 
+
+Is this due to the missing data being removed? Or possibly some other reason for the uneven distribution?
+
 
 ```{r}
+names(Tib_Poverty)
+
 chart<- ggplot(Tib_Poverty, aes(indicator), na.rm = TRUE)
 chart + geom_bar()
+```
+
+```{r}
+ggplot(Tib_Poverty , aes(x = country, y = HDI_value)) + geom_col()
+
+
 ```
 
