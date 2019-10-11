@@ -1,8 +1,9 @@
 ---
 title: "Human Development Analysis"
 subtitle: Jenn Griffiths's Data Science Portfolio
-output: rmarkdown::github_document
-   
+output:
+  html_document:
+    df_print: paged
 ---
 #Install Libraries
 These libraries allow us to use the various functions within this document
