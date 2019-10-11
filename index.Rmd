@@ -37,10 +37,7 @@ Studies have made the case that agriculture is a significant factor in a countri
 
 ### 1. Discovery and Data Preparation
 Below is the link to the current project. 
-```{r}
-
-```
-
+> http://rpubs.com/JennGriff/HDI
 ### 2. Model Planning and Building
 
 Coming soon...
