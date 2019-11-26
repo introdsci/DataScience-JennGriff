@@ -77,10 +77,10 @@ Indicators$iso3 <-as.factor(Indicators$iso3)
 ###Gather year columns
 An important feature of tidy data is that "each variable must have its own column" As in the variable years should be in a single column. This is done because it makes transforming the data a much smoother process. 
 ```{r}
-Indicators <-gather(Indicators, key = Years, "1990", "1991", "1992", "1993", "1994", "1995", "1996", "1997", "1998","1999", "2000", "2001", "2002","2003","2004","2005","2006", "2007","2008","2009","2010","2011","2012","2013","2014","2015", "2016", "2017","9999")
+Indicators <-gather(Indicators, key = Years, "HDI_value", 6:34)
 
 #rename last column to rating
-colnames(Indicators)[colnames(Indicators) == "1990" ] <- "HDI_value"
+#colnames(Indicators)[colnames(Indicators) == "1990" ] <- "HDI_value"
 ```
 #Subset the data based on 'dimensions' category
 To break up the data by 'dimensions', we must take subsets of the original table. It is good practice to have each table be one thing, rather than a collection of everything. Dimensions in this data set are the category under which the Human Development Index is scored. For example dimensions include education, health, demographics, and so on. 
@@ -142,8 +142,13 @@ Nothing gives you a better perspective on your data than plotting your data.
 
 ###Bar Chart across 2 variable
 At first glance the two tall bars in the center look as though there is something weird going on here. In looking into the tibble, it is evident that the HDI_value is scoring each indicator with different units. Most scores are in context of percentages, whereas the two tall bars are in terms of headcounts of certain population groups. This leads to the conclusion that these tibbles need to be sliced again based on the indicators in order for the HDI_values in a tibble to be in the same units.
+
+> This plot demonstrates that the HDI value is not a uniform unit of measure. For each dimension (e.g. Education, Poverty, Health ) there are multiple sebcategories, Indicators that use different units of measure. 
+
 ```{r}
-ggplot(Tib_Poverty, aes(indicator, HDI_value) ) + geom_col() + geom_path(colour = "red", na.rm = TRUE)
+plot <- ggplot(Tib_Poverty, aes(indicator, HDI_value) ) + geom_col() + geom_path(colour = "red", na.rm = TRUE)
+# Rename the x, Y axis to make graph communnicate more clearly
+plot + ggtitle("Plot to demonstrate the HDI score is not a uniform unit of measure") + theme(axis.text.x = element_blank(), axis.text.y = element_blank(), axis.ticks = element_blank()) + xlab("Indicators Within A Dimension") + ylab("HDI Score")
 ```
 
 ###Bar Chart
@@ -157,12 +162,10 @@ Is this due to the missing data being removed? Or possibly some other reason for
 names(Tib_Poverty)
 
 chart<- ggplot(Tib_Poverty, aes(indicator), na.rm = TRUE)
-chart + geom_bar()
+chart + geom_bar() + theme(axis.text.x = element_blank(), axis.text.y = element_blank(), axis.ticks = element_blank())
 ```
 
 ```{r}
-ggplot(Tib_Poverty , aes(x = country, y = HDI_value)) + geom_col()
-
-
+ggplot(Tib_Poverty , aes(x = country, y = HDI_value)) + geom_col() + theme(axis.text.x = element_blank(), axis.text.y = element_blank(), axis.ticks = element_blank())
 ```
 
