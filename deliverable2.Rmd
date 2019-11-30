@@ -1,0 +1,134 @@
+---
+title: "Model PLanning and Model Building"
+author: "Jennifer Griffiths"
+date: "November 18, 2019"
+output: html_document
+---
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+include <- function(library_name){
+  if( !(library_name %in% installed.packages()) )
+    install.packages(library_name) 
+  library(library_name, character.only=TRUE)
+}
+library(data.table)
+#janitor package for cleaning column names
+include("janitor")
+include("tidyverse")
+include("caret")
+include("knitr")
+purl("deliverable1.Rmd", output = "part1.r") # produces r source from rmd
+source("part1.r") # executes the source
+```
+
+#Additional Dataset
+##Retrieved from the Food Security Portal API
+Which delivers the data in the form of either HTML or CSV. I opted for the CSV verion as I am more comfortable with CSV structure:
+```{r}
+AgGDP <- fread('http://www.foodsecurityportal.org/api/countries/agriculture-value-ad.csv')
+head(AgGDP)
+#An additional Dataset in the form of a CSV
+HDI <- read_csv("Data/HDI.csv")
+#Lets remove the first column , as it is a useless duplicate index
+HDI[1] <- NULL
+```
+Looking at the structure of the table, the first row should be the column names, lets make that happen. 
+```{r}
+# grab the firts row with the column names
+names(AgGDP) <- as.matrix(AgGDP[1, ])
+#remove the first row from the table
+AgGDP <- AgGDP[-1, ]
+AgGDP[] <- lapply(AgGDP, function(x) type.convert(as.character(x)))
+head(AgGDP)
+```
+##Agriculture, Value Added (% GDP)
+This dataset documents a counties annual agricultural value added to thier GDP for 1960 - 2016. The agricultural value is the net output of the Agricultural sector which includes forestry, hunting and fishing, and cultivation of crops and livestock production.
+
+##Tidy up
+Lets gather all thes years into a single column
+```{r}
+AgGDP <-gather(AgGDP, key = Years, "Percent_GDP", 2:58, na.rm = TRUE)
+head(AgGDP)
+```
+
+
+##Plot The Data
+Lets explore what insights we may gain from the Agricultural GDP data
+
+```{r}
+plot <- ggplot(AgGDP, aes(Country, Percent_GDP) ) + geom_col() + geom_path(colour = "red", na.rm = TRUE)
+# Rename the x, Y axis to make graph communnicate more clearly
+plot + ggtitle("Explore") + theme(axis.text.x = element_blank(), axis.text.y = element_blank(), axis.ticks = element_blank()) + xlab("Coutries") + ylab("Percent of GDP From Agticulture")
+```
+Interpretation : From this plot it's evident that there is quite a spread among countries in their agricultural contributions to GDP. 
+
+```{r}
+test <- aggregate(AgGDP$Percent_GDP, by=list(AgGDP$Country), FUN=mean)
+#Revert column names to what they actually represent
+colnames(test)[colnames(test) == "Group.1" ] <- "country_name"
+colnames(test)[colnames(test) == "x" ] <- "avg_ag_gdp_percent"
+
+##Making the column names identical, so joining tables by country name is an easier process
+colnames(test)[colnames(test) == "Country" ] <- "country_name"
+colnames(HDI)[colnames(HDI) == "Country" ] <- "country_name"
+colnames(AgGDP)[colnames(AgGDP) == "Country" ] <- "country_name"
+
+
+
+df <- AgGDP %>% full_join(Indicators,by=c("country_name", "Years") )  %>%  na.omit(df) %>% clean_names()
+names(df)
+```
+
+```{r}
+##FOR df TABLE
+set.seed(385)
+
+# pass in y value (to be predicted)
+sample_selection <- createDataPartition(df$percent_gdp, p = 0.75, list = FALSE)
+  
+train <- df[sample_selection, ]
+test <- df[-sample_selection, ]
+```
+
+
+##BUILD MODEL FOR ALL VARIABLES::
+```{r}
+train_model <- lm(percent_gdp ~ 
+                  dimension 
+                  + indicator_id
+                  + indicator_name  
+                  + iso3 
+                  + years
+                  + hdi_value
+                    , data = train)
+summary(train_model)
+
+```
+```
+
+
+
+
+WEBSITE THING: 
+  INdex.html
+    - links: 
+        - deliverable 1
+        - deliverable 2
+        - deliverable 3  link to relative file
+        
+
+  
+CHARTS: 
+ - Rename axis
+ - colors, use legend
+ - make readable
+ - x axis : intervals of 10 or change to end points, hide scale, values
+ - printing (variables) in plain english
+ 
+ 
+ #keep initial model
+  - interpret model reults
+  
+  At end of analysis print tables to visualize data structure to reader. 
+   - ex. 
+        my_tibble           // list name of tibble is the best way to print table
+
