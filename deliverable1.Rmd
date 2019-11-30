@@ -87,53 +87,49 @@ To break up the data by 'dimensions', we must take subsets of the original table
 
 ```{r}
 Composite_indices <- subset(Indicators, dimension == "Composite indices" )
+Composite_indices <- as_tibble(Composite_indices)
+
 Demography <- subset(Indicators, dimension == "Demography" )
+Demography <- as_tibble(Demography)
+
 Education <- subset(Indicators, dimension == "Education" )
+Education <- as_tibble(Education)
+
 Environmental_sustainability <- subset(Indicators, dimension == "Environmental sustainability" )
+Environmental_sustainability <- as_tibble(Environmental_sustainability)
+
 Gender <- subset(Indicators, dimension == "Gender" )
+Gender <- as_tibble(Gender)
+
 Health <- subset(Indicators, dimension == "Health" )
+Health <- as_tibble(Health)
+
 Human_Security <- subset(Indicators, dimension == "Human Security" )
+Human_Security <- as_tibble(Human_Security)
+
 Income_resources <- subset(Indicators, dimension == "Income/composition of resources" )
+Income_resources <- as_tibble(Income_resources)
+
 Inequality <- subset(Indicators, dimension == "Inequality" )
+Inequality <- as_tibble(Inequality)
+
 Mobility_communication <- subset(Indicators, dimension == "Mobility and communication" )
+Mobility_communication <- as_tibble(Mobility_communication)
+
 Poverty <- subset(Indicators, dimension == "Poverty" )
+Poverty <- as_tibble(Poverty)
+
 Sustainability <- subset(Indicators, dimension == "Socio-economic sustainability" )
+Sustainability <- as_tibble(Sustainability)
+
 Financial_flows <- subset(Indicators, dimension == "Trade and financial flows" )
+Financial_flows <- as_tibble(Financial_flows)
+
 Work_vulnerability <- subset(Indicators, dimension == "Work, employment and vulnerability" )
+Work_vulnerability <- as_tibble(Work_vulnerability)
 ```
-#Creating Tibbles
-A tibble is a subset table from a larger table (Rows and columns of data). Creating a tibble for each 'dimension, or category for which the Human Development Index was calculated.
-Here we are creating a tibble from each of the subset tables. 
-```{r}
-  #Composite Indices Tibble
-Tib_CompositeIndices <- tibble(indicator = Composite_indices$indicator_name, country = Composite_indices$country_name, year = Composite_indices$Years, HDI_value = Composite_indices$HDI_value)
-  #Demography Tibble
-Tib_Demography <- tibble(indicator = Demography$indicator_name, country = Demography$country_name, year = Demography$Years, HDI_value = Demography$HDI_value)
-  #Education Tibble
-Tib_Education <- tibble(indicator = Education$indicator_name, country = Education$country_name, year = Education$Years, HDI_value = Education$HDI_value)
-  #Environmental Sustainability Tibble
-Tib_EnvironmentalSustainability <- tibble(indicator = Environmental_sustainability$indicator_name, country = Environmental_sustainability$country_name, year = Environmental_sustainability$Years, HDI_value = Environmental_sustainability$HDI_value)
-  #Gender Tibble
-Tib_Gender <- tibble(indicator = Gender$indicator_name, country = Gender$country_name, year = Gender$Years, HDI_value = Gender$HDI_value)
-  #Health Tibble
-Tib_Health <- tibble(indicator = Health$indicator_name, country = Health$country_name, year = Health$Years, HDI_value = Health$HDI_value)
-  #Human Security Tibble
-Tib_HumanSecurity <- tibble(indicator = Human_Security$indicator_name, country = Human_Security$country_name, year = Human_Security$Years, HDI_value = Human_Security$HDI_value)
-  #Income Resources Tibble
-Tib_IncomeResources <- tibble(indicator = Income_resources$indicator_name, country = Income_resources$country_name, year = Income_resources$Years, HDI_value = Income_resources$HDI_value)
-  #Inequality Tibble
-Tib_Inequality <- tibble(indicator = Inequality$indicator_name, country = Inequality$country_name, year = Inequality$Years, HDI_value = Inequality$HDI_value)
-  #Mobility Communication Tibble
-Tib_MobilityCommunication <- tibble(indicator = Mobility_communication$indicator_name, country = Mobility_communication$country_name, year = Mobility_communication$Years, HDI_value = Mobility_communication$HDI_value)
-  #Poverty Tibble
-Tib_Poverty <- tibble(indicator = Poverty$indicator_name, country = Poverty$country_name, year = Poverty$Years, HDI_value = Poverty$HDI_value)
-  #Sustainability Tibble
-Tib_Sustainability <- tibble(indicator = Sustainability$indicator_name, country = Sustainability$country_name, year = Sustainability$Years, HDI_value = Sustainability$HDI_value)
-  #Financial Flows Tibble
-Tib_FinancialFlows <- tibble(indicator = Financial_flows$indicator_name, country = Financial_flows$country_name, year = Financial_flows$Years, HDI_value = Financial_flows$HDI_value)
-  #Work Vulnerability Tibble
-Tib_WorkVulnerability <- tibble(indicator = Work_vulnerability$indicator_name, country = Work_vulnerability$country_name, year = Work_vulnerability$Years, HDI_value = Work_vulnerability$HDI_value)
-```
+
+
 >There are still a lot of missing values (NA in a cell). For now we will leave them in, but an important tool to use when analyzing the data is the function to remove NA values from the calculations:  
 <center> **na.rm = TRUE** </center>
 
@@ -146,7 +142,7 @@ At first glance the two tall bars in the center look as though there is somethin
 > This plot demonstrates that the HDI value is not a uniform unit of measure. For each dimension (e.g. Education, Poverty, Health ) there are multiple sebcategories, Indicators that use different units of measure. 
 
 ```{r}
-plot <- ggplot(Tib_Poverty, aes(indicator, HDI_value) ) + geom_col() + geom_path(colour = "red", na.rm = TRUE)
+plot <- ggplot(Poverty, aes(indicator_name, HDI_value) ) + geom_col() + geom_path(colour = "red", na.rm = TRUE)
 # Rename the x, Y axis to make graph communnicate more clearly
 plot + ggtitle("Plot to demonstrate the HDI score is not a uniform unit of measure") + theme(axis.text.x = element_blank(), axis.text.y = element_blank(), axis.ticks = element_blank()) + xlab("Indicators Within A Dimension") + ylab("HDI Score")
 ```
@@ -159,13 +155,13 @@ Is this due to the missing data being removed? Or possibly some other reason for
 
 
 ```{r}
-names(Tib_Poverty)
+names(Poverty)
 
-chart<- ggplot(Tib_Poverty, aes(indicator), na.rm = TRUE)
+chart<- ggplot(Poverty, aes(indicator_name), na.rm = TRUE)
 chart + geom_bar() + theme(axis.text.x = element_blank(), axis.text.y = element_blank(), axis.ticks = element_blank())
 ```
 
 ```{r}
-ggplot(Tib_Poverty , aes(x = country, y = HDI_value)) + geom_col() + theme(axis.text.x = element_blank(), axis.text.y = element_blank(), axis.ticks = element_blank())
+ggplot(Poverty , aes(x = country_name, y = HDI_value)) + geom_col() + theme(axis.text.x = element_blank(), axis.text.y = element_blank(), axis.ticks = element_blank())
 ```
 
