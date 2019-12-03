@@ -19,6 +19,10 @@ library(ggplot2)
 Loading the original data into the analysis environment. The original data will not be altered. Versions of the data are created in this environment which can be freely manipulated. If an alteration, such as a removal of a column, was a mistake - one can always reload the original data. 
 ```{r}
 Indicators <- read_csv("Data/Indicators.csv")
+#An additional Dataset in the form of a CSV
+HDI <- read_csv("Data/HDI.csv")
+#Lets remove the first column , as it is a useless duplicate index
+HDI[1] <- NULL
 ```
 #View the Dataframes
 This function will show us the top 6 rows of the data frame in order to give us an idea of the structure of table. 

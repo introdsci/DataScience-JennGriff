@@ -24,7 +24,15 @@ output:
  [5] **"country_name":**                 Name of a country  
  [6 - 33] **"1990" -  "2017":**          Years  
  [34] **"9999":**                        Undefined HDI score    
- 
+
+### Data Source: 
+>*Dataset: AgGDP.csv from 
+* Observations: 188
+* Variables: 58
+* http://www.foodsecurityportal.org/api/countries/agriculture-value-ad.csv
+
+### Variables
+
 ## Abstract
 The project so far has been primarily exploration and attempts to tidy the data. So far I have created a subset table for each dimension, then created a tibble for each indicator within a given dimension.  
 
@@ -38,11 +46,14 @@ Studies have made the case that agriculture is a significant factor in a countri
 ### 1. Discovery and Data Preparation
 Below is the link to the current project. 
 
-> http://rpubs.com/JennGriff/HDI
+> https://introdsci.github.io/DataScience-JennGriff/deliverable1.html
 
-### 2. Model Planning and Building
+### 2. Model Planning and 
 
-Coming soon...
+> https://introdsci.github.io/DataScience-JennGriff/deliverable2.html
+
+## Identify / Introduce predictions you would like to model
+# Why those predictions should matter, why datset matters
 
 ### 3. Results and Operationalization
 

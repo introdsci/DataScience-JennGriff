@@ -1,5 +1,5 @@
 ---
-title: "Model PLanning and Model Building"
+title: "Model Planning and Model Building"
 author: "Jennifer Griffiths"
 date: "November 18, 2019"
 output: html_document
@@ -25,7 +25,7 @@ source("part1.r") # executes the source
 Which delivers the data in the form of either HTML or CSV. I opted for the CSV verion as I am more comfortable with CSV structure:
 ```{r}
 AgGDP <- fread('http://www.foodsecurityportal.org/api/countries/agriculture-value-ad.csv')
-head(AgGDP)
+names(AgGDP)
 ```
 Looking at the structure of the table, the first row should be the column names, lets make that happen. 
 ```{r}
@@ -154,8 +154,8 @@ This model is in need of more related information in order to explore the idea t
 
 ### TABLES USED CREATING THE MODEL
 ```{r}
-AgGDP
-df
+head(AgGDP)
+head(df)
 ```
 
 WEBSITE THING: 
