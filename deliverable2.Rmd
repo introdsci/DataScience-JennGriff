@@ -59,7 +59,7 @@ plot <- ggplot(AgGDP, aes(Country, Percent_GDP) ) + geom_col() + geom_path(colou
 # Rename the x, Y axis to make graph communnicate more clearly
 plot + ggtitle("Explore") + theme(axis.text.x = element_blank(), axis.text.y = element_blank(), axis.ticks = element_blank()) + xlab("Coutries") + ylab("Percent of GDP From Agticulture")
 ```
-Interpretation : From this plot it's evident that there is quite a spread among countries in their agricultural contributions to GDP. 
+###Interpretation : From this plot it's evident that there is quite a spread among countries in their agricultural contributions to GDP. The goal here is to find varibles that can predict a countries percentage of GDP coming from agriculture
 
 ```{r}
 test <- aggregate(AgGDP$Percent_GDP, by=list(AgGDP$Country), FUN=mean)
@@ -95,7 +95,6 @@ test <- df[-sample_selection, ]
 train_model <- lm(percent_gdp ~ 
                   dimension 
                   + indicator_id
-                  + indicator_name  
                   + iso3 
                   + years
                   + hdi_value
@@ -103,8 +102,22 @@ train_model <- lm(percent_gdp ~
 summary(train_model)
 
 ```
-```
+This summary tells us that the iso3 (officially assigned country codes) is a significant indicatior, which is not significant - as the percent of a countries GPD that is Agricultural is directly linked to the country. More interesting is there is a specific indicator id (indicator_id 52606 : P Value 0.000412 ***) with a P value below 0.05 - indicating the relationship between a countries percentage of GDP being Agricultural and this indicator is statistically significant. Lets take a look at what this indicator is:
 
+```{r}
+Significant_indicator <- subset(Indicators, indicator_id == "52606")
+Significant_indicator[1,]
+```
+Within the dimension "Trade and financial flows" the "Remittances, inflows (% of GDP)" is significant. This is interesting. A remittance is a transfer of money by a foreign worker to an individual in thier home country. A country with a large percentage of thier GDP coming from "Remittances, inflows" would be considered a labor-exporting country where much of the money they earn outside of thier home country is sent to family back in thier home country. An example of this is India, currently the top reciever of remittance. 
+So potentially the indicator "Remittances, inflows (% of GDP)" can be a predictor for the percentage of the GDP that is Agricultural. 
+
+Another significant indicator (indicator id : 174206) 
+```{r}
+Sig_indicator <- subset(Indicators, indicator_id == "174206")
+Sig_indicator[2,]
+```
+Within the dimension "Socio-economic sustainability" the indicator "Total debt service (% of exports of goods, services and primary income)" has a higher P value that the remittance indicator but it's the next most significant factor that can predict the percentage of the GDP that comes from agriculture. 
+Total debt service is the sum of principal repayments and interest actually paid in currency, goods, or services on long-term debt, interest paid on short-term debt, and repayments (repurchases and charges) to the IMF.
 
 
 
