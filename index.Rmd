@@ -9,15 +9,15 @@ output:
   The decision to use the Human Development Index (HDI) data set is motivated by a desire to learn about the different conditions under which people live. 
 
 ### Data Source: United Nations Development Programme
->* DataSet: Indicators.csv  
-* Observations: 25636  
-* Variables: 34  
-* http://hdr.undp.org/en/content/human-development-index-hdi
+>* DataSet: Indicators.csv     
+* Observations: 25636              
+* Variables: 34                     
+* http://hdr.undp.org/en/content/human-development-index-hdi            
 
   The Human Development Index was developed by the United Nations in order to assess the development of a country on more factors than economics alone. Additional factors include such things as life expectancy at birth, education level, and percentage of the population employed. The overall Human Development Index for a country is calculated across 14 different dimensions (e.g. Education, Health, Poverty, etc.) then combined to get the overall index score. There are a lot of missing values and the HDI scores are in vastly different units in one column. The calculations go get these scores are fairly complex and would be very time consuming to reverse engineer the mathematics to validate their accuracy.  
   
 ### Variables
- >[1] **"dimension":**                   The Category of the HDI score  
+ >[1] **"dimension":**                   The Category of the HDI score   
  [2] **"indicator_id":**                 Unique ID number for class of indicator  
  [3] **"indicator_name":**               Subcategory of the dimension variable  
  [4] **"iso3":**                         Country code  
@@ -25,13 +25,16 @@ output:
  [6 - 33] **"1990" -  "2017":**          Years  
  [34] **"9999":**                        Undefined HDI score    
 
-### Data Source: 
->*Dataset: AgGDP.csv from 
-* Observations: 188
-* Variables: 58
-* http://www.foodsecurityportal.org/api/countries/agriculture-value-ad.csv
+### Data Source: Food Security Portal
+>*Dataset: AgGDP.csv 
+* Observations: 188 
+* Variables: 58 
+* http://www.foodsecurityportal.org/api/countries/agriculture-value-ad.csv 
 
-### Variables
+### Variables 
+>[1] **"Country":**                        Country   
+[2] **"Year":**                            Year   
+[3] **"Percent_GDP":**                     Percentage of GDP that comes from the Agricultural Sector   
 
 ## Abstract
 The project so far has been primarily exploration and attempts to tidy the data. So far I have created a subset table for each dimension, then created a tibble for each indicator within a given dimension.  
