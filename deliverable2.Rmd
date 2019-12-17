@@ -79,15 +79,13 @@ From this plot it's evident that there is quite a spread among countries in thei
 In order to combine the two datsets lets aggregate the "Percent of GDP from Agriculture" into an average overtime. This will give us a starting point to explore interesting relationships.
 
 ```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
-
-
 ##Making the column names identical, so joining tables by country name is an easier process
-
 colnames(HDI)[colnames(HDI) == "Country" ] <- "country_name"
 colnames(AgGDP)[colnames(AgGDP) == "Country" ] <- "country_name"
 
 #Join tables by country name and years
 df <- AgGDP %>% full_join(Indicators,by=c("country_name", "Years") )  %>%  na.omit(df) %>% clean_names()
+df <- na.omit(df)
 names(df)
 head(df)
 ```
@@ -131,66 +129,78 @@ summary(train_model)
 ```
 With this revised model we can see more of the indicators that would be considered statistically significant (low P-Values marked with astericks). There are a total of 74 'indicator id's" and the HDI value which gives the grand total of 75 statistically significant markers for a countries annual percentage of GDP comming from Agriculture. 
 
-#Significant indicator (indicator id : 52606) 
+Lets explore some of these indicators with the lowest P values. 
+
+#Significant indicator (indicator id : 69206, P-Value : 5.23e-06) 
 ```{r}
-Significant_indicator <- subset(Indicators, indicator_id == "52606")
-Significant_indicator[1,]
+Significant_indicator01 <- subset(Indicators, indicator_id == "69206")
+Significant_indicator01[1,]
 ```
 
-  Within the dimension "Trade and financial flows" the "Remittances, inflows (% of GDP)" is significant. This is interesting. A remittance is a transfer of money by a foreign worker to an individual in thier home country. A country with a large percentage of thier GDP coming from "Remittances, inflows" would be considered a labor-exporting country where much of the money they earn outside of thier home country is sent to back home. An example of this is India, currently the top reciever of remittance. 
-So potentially the indicator "Remittances, inflows (% of GDP)" can be a predictor for the percentage of the GDP that is Agricultural. 
-
-
-###Percentage of GDP from Agriculture and Remittances, inflows (% of GDP)
+###Percentage of GDP from Agriculture and Life expectancy at birth (years)
+To clarify, the X value will be the HDI score, as that is the value for the indicator id. Here the HDI Score is the average life expectancy in years for a country. 
 ```{r}
-AgToRemittance <- subset(df, indicator_id == "52606" )
-ggplot(AgToRemittance, aes(x = hdi_value, y = percent_gdp)) + geom_point() + geom_smooth() + ggtitle("Percentages of GDP") + theme(axis.text.x = element_blank(), axis.text.y = element_blank(), axis.ticks = element_blank()) + xlab("Remittances: Inflow") + ylab("Agricultural Products") 
+AgToLifeExpectancy <- subset(df, indicator_id == "69206" )
+ggplot(AgToLifeExpectancy, aes(x = hdi_value, y = percent_gdp)) + geom_point() + geom_smooth() + ggtitle("Percentages of GDP") + theme(axis.text.x = element_blank(), axis.text.y = element_blank(), axis.ticks = element_blank()) + xlab("Life expectancy at birth (years) HDI Score") + ylab("Agricultural Products") 
 ```
 
 ###Assessment of Graph
-This is an interesting shape. The clustering around the origin can be explained by the fact HDI value is a percentage where in some cases the percentage of remittances contributing to GDP is above 100%. Lets look at this graph on a smaller scale, say from 0 - 100 % to see the cluster more clearly.
+This is not what I expected to see. This graph indicates that as the average life expectancy increases, the percentage of GDP that is Agricultural decreases. Potentially this is due to wealthy countries produce a greater diversity of products that contribute to their overall GDP, whereas developing countries primarily produce agricultural products, raw materials, and labor. More GDP data would be needed to corroborate this assumption. 
 
-```{r warning=FALSE}
-ggplot(AgToRemittance, aes(x = hdi_value, y = percent_gdp)) + geom_point() + geom_smooth() + ggtitle("Percentages of GDP") + theme(axis.text.x = element_blank(), axis.text.y = element_blank(), axis.ticks = element_blank()) + xlab("Remittances: Inflow") + ylab("Agricultural Products") + xlim(0, 1)
+#Significant indicator (indicator id : 58006, P-Value : < 2e-16) 
+```{r}
+Sig_indicator02 <- subset(Indicators, indicator_id == "58006")
+Sig_indicator02[2,]
 ```
 
-This does not look like a terribly interesting relationship, but still valuable. 
-
-#Significant indicator (indicator id : 53506) 
+###Percentage of GDP from Agriculture and HIV prevalence, adult (% ages 15-49)
+Our X value here is the HDI value which is the percentage value for the indicator "HIV prevalence, adult (% ages 15-49)". 
 ```{r}
-Sig_indicator <- subset(Indicators, indicator_id == "53506")
-Sig_indicator[2,]
-```
-
-###Percentage of GDP from Agriculture and Total debt service (% of exports of goods, services and primary income)
-Our X value here is the HDI value which is the percentage value for the indicator "Foreign direct investment, net inflows (% of GDP)". 
-```{r}
-AgToDebt <- subset(df, indicator_id == "174206" )
-ggplot(AgToDebt, aes(x = hdi_value, y = percent_gdp)) + geom_col() + ggtitle("Agricultural Production Related to") + theme(axis.text.x = element_blank(), axis.text.y = element_blank(), axis.ticks = element_blank()) + xlab("") + ylab("Agricultural Products - Percent of GDP")
+AgToLHIV <- subset(df, indicator_id == "58006" )
+ggplot(AgToLHIV, aes(x = hdi_value, y = percent_gdp)) + geom_point() + geom_smooth() + ggtitle("Percentages of GDP") + theme(axis.text.x = element_blank(), axis.text.y = element_blank(), axis.ticks = element_blank()) + xlab("HIV prevalence, adult (% ages 15-49)") + ylab("Agricultural Products") 
 ```
 
 ###Assessment of Graph
+Thats a funky funky shape. This shape may be skewed by rises and falls of rates of HIV over the years, as each dot represents each country for each year between 1990 and 2017. The graph doesn't appear to communicate anything terribly interesting. Potentially it indicates that the highest HIV prevelence occurred in a country with a lower annual Agricultural percentage of the GDP, but it is to noisy to make any conclusions. 
 
 
+#Significant indicator (indicator id : 123606, P-Value : < 2e-16) 
+```{r}
+Sig_indicator03 <- subset(Indicators, indicator_id == "123606")
+Sig_indicator03[2,]
+```
 
+###Percentage of GDP from Agriculture and Estimated gross national income per capita, male (2011 PPP $)
+Our X value here is the HDI value which is the dollar value for the indicator "Estimated gross national income per capita, male (2011 PPP $)". 
+```{r}
+AgToLMaleIncome <- subset(df, indicator_id == "123606" )
+ggplot(AgToLMaleIncome, aes(x = hdi_value, y = percent_gdp)) + geom_point() + geom_smooth() + ggtitle("Percentages of GDP") + theme(axis.text.x = element_blank(), axis.text.y = element_blank(), axis.ticks = element_blank()) + xlab("Estimated gross national income per capita, male (2011 PPP $)") + ylab("Agricultural Products") 
+```
 
+###Assessment of Graph
+This looks very close to: [ y = 1/x ]. As the percentage of GDP that comes from Agriculture decreases, the per capita male income increases. This seems to have a direct relationship. My assumption would be that a country that has a significant portion of it's GDP comming from Agriculture, has a vast majority of its population working the land. Unfortunately, across the globe, that peope that labor to produce our food, do not make much money.
 
+#Significant indicator (indicator id : 69706, P-Value : 2.47e-05)
+```{r}
+Sig_indicator04 <- subset(Indicators, indicator_id == "69706")
+Sig_indicator04[2,]
+```
 
+###Percentage of GDP from Agriculture and Expected years of schooling (years)
+Our X value here is the HDI value which is the years for the indicator "Expected years of schooling (years)". 
+```{r}
+AgToEducation <- subset(df, indicator_id == "69706" )
+ggplot(AgToEducation, aes(x = hdi_value, y = percent_gdp)) + geom_point() + geom_smooth() + ggtitle("Percentages of GDP") + theme(axis.text.x = element_blank(), axis.text.y = element_blank(), axis.ticks = element_blank()) + xlab("Expected years of schooling (years)") + ylab("Agricultural Products") 
+```
 
+###Assessment of Graph
+It's a bit noisy at the head, but tightens up at the tail. This graph lines up with the other graphs in terms of the negative relationships. Here we can see that as expected years of schooling increases, the agricultural contribution to overall GDP drops. 
 
+> I could spent all day graphing these relationships, but lets stop here and give a preliminary evaluation of this model
 
-
-
-
-
-
-
-
-_______________________________
 
 ###Model Evaluation
-
-This model is in need of more related information in order to explore the idea that a countries Agricultural production may be related to the quality of life in a country. Data on the proportion of agricultural production that is either a deficit or surplus in realtion to feeding it's local population. The amount of food imports, exports, and food aid recieved/sent complicates the calculation. 
+The revised model has successfully identified a relationship between a countries Agricultural contributions to overall GDP in relation to the overall well-being and health of its citizens. The relations above tend to indicate that as the percentage of GDP that comes from agriculture drops, the well-being increase. 
 
 ### TABLES USED CREATING THE MODEL
 ```{r}
