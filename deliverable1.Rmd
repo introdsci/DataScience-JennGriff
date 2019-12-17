@@ -81,7 +81,7 @@ Indicators$iso3 <-as.factor(Indicators$iso3)
 ###Gather year columns
 An important feature of tidy data is that "each variable must have its own column" As in the variable years should be in a single column. This is done because it makes transforming the data a much smoother process. 
 ```{r}
-Indicators <-gather(Indicators, key = Years, "HDI_value", 6:34)
+Indicators <-gather(Indicators, key = Years, "HDI_value", 6:34, na.rm = TRUE)
 
 #rename last column to rating
 #colnames(Indicators)[colnames(Indicators) == "1990" ] <- "HDI_value"
@@ -91,51 +91,48 @@ To break up the data by 'dimensions', we must take subsets of the original table
 
 ```{r}
 Composite_indices <- subset(Indicators, dimension == "Composite indices" )
-Composite_indices <- as_tibble(Composite_indices)
+Composite_indices <- as_tibble(Composite_indices, na.rm = TRUE)
 
 Demography <- subset(Indicators, dimension == "Demography" )
-Demography <- as_tibble(Demography)
+Demography <- as_tibble(Demography, na.rm = TRUE)
 
 Education <- subset(Indicators, dimension == "Education" )
-Education <- as_tibble(Education)
+Education <- as_tibble(Education, na.rm = TRUE)
 
 Environmental_sustainability <- subset(Indicators, dimension == "Environmental sustainability" )
 Environmental_sustainability <- as_tibble(Environmental_sustainability)
 
 Gender <- subset(Indicators, dimension == "Gender" )
-Gender <- as_tibble(Gender)
+Gender <- as_tibble(Gender, na.rm = TRUE)
 
 Health <- subset(Indicators, dimension == "Health" )
-Health <- as_tibble(Health)
+Health <- as_tibble(Health, na.rm = TRUE)
 
 Human_Security <- subset(Indicators, dimension == "Human Security" )
-Human_Security <- as_tibble(Human_Security)
+Human_Security <- as_tibble(Human_Security, na.rm = TRUE)
 
 Income_resources <- subset(Indicators, dimension == "Income/composition of resources" )
-Income_resources <- as_tibble(Income_resources)
+Income_resources <- as_tibble(Income_resources, na.rm = TRUE)
 
 Inequality <- subset(Indicators, dimension == "Inequality" )
-Inequality <- as_tibble(Inequality)
+Inequality <- as_tibble(Inequality, na.rm = TRUE)
 
 Mobility_communication <- subset(Indicators, dimension == "Mobility and communication" )
-Mobility_communication <- as_tibble(Mobility_communication)
+Mobility_communication <- as_tibble(Mobility_communication,na.rm = TRUE)
 
 Poverty <- subset(Indicators, dimension == "Poverty" )
-Poverty <- as_tibble(Poverty)
+Poverty <- as_tibble(Poverty, na.rm = TRUE)
 
 Sustainability <- subset(Indicators, dimension == "Socio-economic sustainability" )
-Sustainability <- as_tibble(Sustainability)
+Sustainability <- as_tibble(Sustainability, na.rm = TRUE)
 
 Financial_flows <- subset(Indicators, dimension == "Trade and financial flows" )
-Financial_flows <- as_tibble(Financial_flows)
+Financial_flows <- as_tibble(Financial_flows, na.rm = TRUE)
 
 Work_vulnerability <- subset(Indicators, dimension == "Work, employment and vulnerability" )
-Work_vulnerability <- as_tibble(Work_vulnerability)
+Work_vulnerability <- as_tibble(Work_vulnerability, na.rm = TRUE)
 ```
 
-
->There are still a lot of missing values (NA in a cell). For now we will leave them in, but an important tool to use when analyzing the data is the function to remove NA values from the calculations:  
-<center> **na.rm = TRUE** </center>
 
 #Now It's Time For STEP ZERO: Plot The Data
 Nothing gives you a better perspective on your data than plotting your data. 
@@ -157,15 +154,13 @@ The assumption would be that there is an even spread of the amount of indicators
 
 Is this due to the missing data being removed? Or possibly some other reason for the uneven distribution?
 
-
 ```{r}
-names(Poverty)
 
 chart<- ggplot(Poverty, aes(indicator_name), na.rm = TRUE)
-chart + geom_bar() + theme(axis.text.x = element_blank(), axis.text.y = element_blank(), axis.ticks = element_blank())
+chart + geom_bar() + theme(axis.text.x = element_blank(), axis.text.y = element_blank(), axis.ticks = element_blank())+ ggtitle('Indicators Have a Slight Variation In Occurrences')
 ```
 
 ```{r}
-ggplot(Poverty , aes(x = country_name, y = HDI_value)) + geom_col() + theme(axis.text.x = element_blank(), axis.text.y = element_blank(), axis.ticks = element_blank())
+ggplot(Poverty , aes(x = country_name, y = HDI_value)) + geom_col() + theme(axis.text.x = element_blank(), axis.text.y = element_blank(), axis.ticks = element_blank())+ ggtitle("HDI Scores Among Each Country")
 ```
 
