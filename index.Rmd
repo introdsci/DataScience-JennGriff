@@ -14,7 +14,8 @@ output:
 * Variables: 34                     
 * http://hdr.undp.org/en/content/human-development-index-hdi            
 
-  The Human Development Index was developed by the United Nations in order to assess the development of a country on more factors than economics alone. Additional factors include such things as life expectancy at birth, education level, and percentage of the population employed. The overall Human Development Index for a country is calculated across 14 different dimensions (e.g. Education, Health, Poverty, etc.) then combined to get the overall index score. There are a lot of missing values and the HDI scores are in vastly different units in one column. The calculations go get these scores are fairly complex and would be very time consuming to reverse engineer the mathematics to validate their accuracy.  
+  The Human Development Index was developed by the United Nations in order to assess the development of a country on more factors than economics alone. Additional factors include such things as life expectancy at birth, education level, and percentage of the population employed. 
+  The dimensions are the categories of data that may indicate a countries quality human development. The dimensions have sub-categories called 'indicators' (e.g. Dimension: Education, Indicator: Literacy Rate ) The indicator values, across all dimentions are calculated by the United Nations to give a single Human Develoment Index score. For 2019 the top ranked country is Norway, with the United States comming in at number 12.
   
 ### Variables
  >[1] **"dimension":**                   The Category of the HDI score   
@@ -37,7 +38,7 @@ output:
 [3] **"Percent_GDP":**                     Percentage of GDP that comes from the Agricultural Sector   
 
 ## Abstract
-The project so far has been primarily exploration and attempts to tidy the data. So far I have created a subset table for each dimension, then created a tibble for each indicator within a given dimension.  
+The project has been exploration and attempts to tidy the data. So far I have created a subset table for each dimension, then created a tibble for each indicator within a given dimension. In analyzing the data, in delliverable I discovered that the Human Development Index scores vary in units of measure across different   
 
 ###Research Questions:
 Studies have made the case that agriculture is a significant factor in a countries populations quality of life. Many areas have been reported as strongly correlated  such as rates of poverty, employment, education level, and population density. In many of these countries the issue is not as simple as needing equipment, training, or supplies. Many charitable programs give food, training, and equipment but this band-aid does not actually lead to a country becoming self-sufficient - rather they become more dependent. You can give a farmer a tractor, but they may not have access to a reliable source of diesel. You can train farmers modern sustainable farming, but the culture of the specific group needs to be considered in order have the specific group intrinsically motivated to implement improvements that fit in their culture and are practical to their lives. 
@@ -46,19 +47,25 @@ Studies have made the case that agriculture is a significant factor in a countri
 
 2. What living standards and practices are common among countries with low output agriculture?
 
-### 1. Discovery and Data Preparation
+# 1. Discovery and Data Preparation
 Below is the link to the current project. 
 
 > https://introdsci.github.io/DataScience-JennGriff/deliverable1.html
 
-### 2. Model Planning and 
+###Revisions for final deliverable: 
+* Removed all NA values from all tables and tibbles. This revision changed the shape of the data in the plots in deliveable one. Although the shape changed, interestingly ( or maybe out of dumb luck) they still communicated the same interpretation of the data set. 
+
+* Removed many of the tibbles that were originally built, as implied by Dr. Buffardi's comments on the first deliverable. The original intention of breaking up the tibbles further was to have the HDI values be a consistent unit of measure within a single tibble (as some measures are percents, headcounts, dollars, and so on). In order to achieve that it would have been over a hundred tibbles - where that effort would not have benefitted the modeling process. 
+
+# 2. Model Planning 
 
 > https://introdsci.github.io/DataScience-JennGriff/deliverable2.html
 
-## Identify / Introduce predictions you would like to model
-# Why those predictions should matter, why datset matters
+###Revisions for final deliverable: 
 
 ### 3. Results and Operationalization
 
-Coming soon...
+> https://introdsci.github.io/DataScience-JennGriff/deliverable3.html
+
+In the final stage of this project many revisions were made to the previous deliverables.
 
