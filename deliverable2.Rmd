@@ -19,11 +19,26 @@ include("knitr")
 purl("deliverable1.Rmd", output = "part1.r") # produces r source from rmd
 source("part1.r") # executes the source
 ```
+#The Previous Data
+Here is a snipit of the tables that were used in the previous stage of the project:
+```{r}
+#This is a snippet of the original table after gather the years into a single column
+head(Indicators)
+#Each of the 14 dimensions was subset into its own table (tibble)
+unique(Indicators$dimension)
+```
+The dimensions are the categories of data that may indicate a countries quality human development. The dimensions have sub-categories called 'indicators' (e.g. Dimension: Education, Indicator: Literacy Rate ) The indicator values, across all dimentions are calculated by the United Nations to give a single Human Develoment Index score. For 2019 the top ranked country is Norway, with the United States coming in at number 12.
+```{r}
+#The structure of the tibble for the dimension: Education 
+head(Education)
+#The structure of the tibble for the dimension: Poverty
+head(Poverty)
+```
 
 #Additional Dataset
 ##Retrieved from the Food Security Portal API
 Which delivers the data in the form of either HTML or CSV. I opted for the CSV verion as I am more comfortable with CSV structure:
-```{r}
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 AgGDP <- fread('http://www.foodsecurityportal.org/api/countries/agriculture-value-ad.csv')
 names(AgGDP)
 ```
@@ -37,16 +52,17 @@ AgGDP <- AgGDP[-1, ]
 AgGDP[] <- lapply(AgGDP, function(x) type.convert(as.character(x)))
 head(AgGDP)
 ```
+
+
 ##Agriculture, Value Added (% GDP)
 This dataset documents a counties annual agricultural value added to thier GDP for 1960 - 2016. The agricultural value is the net output of the Agricultural sector which includes forestry, hunting and fishing, and cultivation of crops and livestock production.
 
 ##Tidy up
-Lets gather all thes years into a single column and remove the NA values while we're here.
+Lets gather all these years into a single column and remove the NA values while we're here.
 ```{r}
 AgGDP <-gather(AgGDP, key = Years, "Percent_GDP", 2:58, na.rm = TRUE)
 head(AgGDP)
 ```
-
 
 ##Plot The Data
 Lets explore what insights we may gain from the Agricultural GDP data
@@ -60,22 +76,20 @@ plot + ggtitle("Explore") + theme(axis.text.x = element_blank(), axis.text.y = e
 ###Interpretation 
 From this plot it's evident that there is quite a spread among countries in their agricultural contributions to GDP. The goal here is to find varibles that can predict a countries percentage of GDP coming from agriculture.
 
-In order to combine the two datsets lets aggregate the "Percent of GDP from Agriculture" into an average overtime. This will give us a starting point to explore intersting relationships.
+In order to combine the two datsets lets aggregate the "Percent of GDP from Agriculture" into an average overtime. This will give us a starting point to explore interesting relationships.
 
 ```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
-test <- aggregate(AgGDP$Percent_GDP, by=list(AgGDP$Country), FUN=mean)
-#Revert column names to what they actually represent
-colnames(test)[colnames(test) == "Group.1" ] <- "country_name"
-colnames(test)[colnames(test) == "x" ] <- "avg_ag_gdp_percent"
+
 
 ##Making the column names identical, so joining tables by country name is an easier process
-colnames(test)[colnames(test) == "Country" ] <- "country_name"
+
 colnames(HDI)[colnames(HDI) == "Country" ] <- "country_name"
 colnames(AgGDP)[colnames(AgGDP) == "Country" ] <- "country_name"
 
 #Join tables by country name and years
 df <- AgGDP %>% full_join(Indicators,by=c("country_name", "Years") )  %>%  na.omit(df) %>% clean_names()
 names(df)
+head(df)
 ```
 ##Lets set up our model
 ```{r}
@@ -103,35 +117,29 @@ summary(train_model)
 
 ```
 
-This summary tells us that the iso3 (officially assigned country codes) is a significant indicatior, which is not significant - as the percent of a countries GPD that is Agricultural is directly linked to the country. More interesting is there is a specific indicator id (indicator_id 52606 : P Value 0.000412 ***) with a P value below 0.05 - indicating the relationship between a countries percentage of GDP being Agricultural and this indicator is statistically significant. Lets take a look at what this indicator is:
+  This summary tells us that the iso3 (officially assigned country codes) is a significant indicatior, which is not meaningful - as the percent of a countries GPD that is Agricultural is directly linked to the country. 
+  
+  Lets remove some of the variables to clean up this model. "Years" and "iso" are irrelevant relationships because the country and the year are information that directly link the annual agricultual GDP to a country. Lets also remove dimentions as that vRble has a consistant high P-value across all levels - meaning none of the dimension categories are statistically significant. 
+###Revised Model
+```{r}
+train_model <- lm(percent_gdp ~
+                   indicator_id
+                  + hdi_value
+                    , data = train)
+summary(train_model)
 
+```
+With this revised model we can see more of the indicators that would be considered statistically significant (low P-Values marked with astericks). There are a total of 74 'indicator id's" and the HDI value which gives the grand total of 75 statistically significant markers for a countries annual percentage of GDP comming from Agriculture. 
+
+#Significant indicator (indicator id : 52606) 
 ```{r}
 Significant_indicator <- subset(Indicators, indicator_id == "52606")
 Significant_indicator[1,]
 ```
 
-Within the dimension "Trade and financial flows" the "Remittances, inflows (% of GDP)" is significant. This is interesting. A remittance is a transfer of money by a foreign worker to an individual in thier home country. A country with a large percentage of thier GDP coming from "Remittances, inflows" would be considered a labor-exporting country where much of the money they earn outside of thier home country is sent to back home. An example of this is India, currently the top reciever of remittance. 
+  Within the dimension "Trade and financial flows" the "Remittances, inflows (% of GDP)" is significant. This is interesting. A remittance is a transfer of money by a foreign worker to an individual in thier home country. A country with a large percentage of thier GDP coming from "Remittances, inflows" would be considered a labor-exporting country where much of the money they earn outside of thier home country is sent to back home. An example of this is India, currently the top reciever of remittance. 
 So potentially the indicator "Remittances, inflows (% of GDP)" can be a predictor for the percentage of the GDP that is Agricultural. 
 
-Another significant indicator (indicator id : 174206) 
-```{r}
-Sig_indicator <- subset(Indicators, indicator_id == "174206")
-Sig_indicator[2,]
-```
-
-Within the dimension "Socio-economic sustainability" the indicator "Total debt service (% of exports of goods, services and primary income)" has a higher P value that the remittance indicator, meaning it has a weaker relationship, but it's the next most significant factor that can predict the percentage of the GDP that comes from agriculture. This is interesting because the total debt service is the sum of principal repayments and interest actually paid in currency, goods, or services on long-term debt, interest paid on short-term debt, and repayments (repurchases and charges) to the IMF. Meaning a countries total debt repayments in relation to the amount they produce, which would indicate a developing country if the debt is close to or above the amount the country is able to produce. 
-
-These two factors could possible support the hypothesis that a developing country, with lower Human Development Index scores, share similar Agricultural production. Lets plot these relationships to get a better idea of what is happening here.
-
-###Percentage of GDP from Agriculture and Total debt service (% of exports of goods, services and primary income)
-Our X value here is the HDI value which is the percentage value for the indicator "Total debt service (% of exports of goods, services and primary income)". 
-```{r}
-AgToDebt <- subset(df, indicator_id == "174206" )
-ggplot(AgToDebt, aes(x = hdi_value, y = percent_gdp)) + geom_col() + ggtitle("Agricultural Production Related to Debt") + theme(axis.text.x = element_blank(), axis.text.y = element_blank(), axis.ticks = element_blank()) + xlab("Total Debt Service - Percent of Exports") + ylab("Agricultural Products - Percent of GDP")
-```
-
-###Assessment of Graph
-This is interesting, the graph is communicating that the higher the percentage of GDP that comes from Agriculture relates to a lower debt ratio (annual debt payments in proportion to sum of production). This leads me to the idea that a country that has a higher debt ratio produces less agricultural products in proportion to all other means of production. 
 
 ###Percentage of GDP from Agriculture and Remittances, inflows (% of GDP)
 ```{r}
@@ -139,7 +147,7 @@ AgToRemittance <- subset(df, indicator_id == "52606" )
 ggplot(AgToRemittance, aes(x = hdi_value, y = percent_gdp)) + geom_point() + geom_smooth() + ggtitle("Percentages of GDP") + theme(axis.text.x = element_blank(), axis.text.y = element_blank(), axis.ticks = element_blank()) + xlab("Remittances: Inflow") + ylab("Agricultural Products") 
 ```
 
-##Assessment of Graph
+###Assessment of Graph
 This is an interesting shape. The clustering around the origin can be explained by the fact HDI value is a percentage where in some cases the percentage of remittances contributing to GDP is above 100%. Lets look at this graph on a smaller scale, say from 0 - 100 % to see the cluster more clearly.
 
 ```{r warning=FALSE}
@@ -147,6 +155,38 @@ ggplot(AgToRemittance, aes(x = hdi_value, y = percent_gdp)) + geom_point() + geo
 ```
 
 This does not look like a terribly interesting relationship, but still valuable. 
+
+#Significant indicator (indicator id : 53506) 
+```{r}
+Sig_indicator <- subset(Indicators, indicator_id == "53506")
+Sig_indicator[2,]
+```
+
+###Percentage of GDP from Agriculture and Total debt service (% of exports of goods, services and primary income)
+Our X value here is the HDI value which is the percentage value for the indicator "Foreign direct investment, net inflows (% of GDP)". 
+```{r}
+AgToDebt <- subset(df, indicator_id == "174206" )
+ggplot(AgToDebt, aes(x = hdi_value, y = percent_gdp)) + geom_col() + ggtitle("Agricultural Production Related to") + theme(axis.text.x = element_blank(), axis.text.y = element_blank(), axis.ticks = element_blank()) + xlab("") + ylab("Agricultural Products - Percent of GDP")
+```
+
+###Assessment of Graph
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+_______________________________
 
 ###Model Evaluation
 
@@ -158,12 +198,6 @@ head(AgGDP)
 head(df)
 ```
 
-WEBSITE THING: 
-  INdex.html
-    - links: 
-        - deliverable 1
-        - deliverable 2
-        - deliverable 3  link to relative file
         
 
   
