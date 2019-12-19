@@ -13,7 +13,7 @@ include <- function(library_name){
 library(data.table)
 #janitor package for cleaning column names
 include("janitor")
-include("tidyverse")
+#include("tidyverse")
 include("caret")
 include("knitr")
 purl("deliverable1.Rmd", output = "part1.r") # produces r source from rmd
