@@ -4,22 +4,23 @@ author: "Jennifer Griffiths"
 date: "November 18, 2019"
 output: html_document
 ---
-```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
-include <- function(library_name){
+```{r options(knitr.duplicate.label = 'allow'), message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+include2 <- function(library_name){
   if( !(library_name %in% installed.packages()) )
     install.packages(library_name) 
   library(library_name, character.only=TRUE)
 }
 library(data.table)
 #janitor package for cleaning column names
-include("janitor")
+include2("janitor")
 #include("tidyverse")
-include("caret")
-include("knitr")
+include2("caret")
+include2("knitr")
 purl("deliverable1.Rmd", output = "part1.r") # produces r source from rmd
 source("part1.r") # executes the source
 ```
 #The Previous Data
+
 Here is a snipit of the tables that were used in the previous stage of the project:
 ```{r}
 #This is a snippet of the original table after gather the years into a single column
