@@ -29,6 +29,8 @@ unique(Indicators$dimension)
 ```
 The dimensions are the categories of data that may indicate a countries quality human development. The dimensions have sub-categories called 'indicators' (e.g. Dimension: Education, Indicator: Literacy Rate ) The indicator values, across all dimentions are calculated by the United Nations to give a single Human Develoment Index score. For 2019 the top ranked country is Norway, with the United States coming in at number 12.
 ```{r}
+#The different incicators
+unique(Indicators$indicator_name)
 #The structure of the tibble for the dimension: Education 
 head(Education)
 #The structure of the tibble for the dimension: Poverty
@@ -37,12 +39,12 @@ head(Poverty)
 
 #Additional Dataset
 ##Retrieved from the Food Security Portal API
-Which delivers the data in the form of either HTML or CSV. I opted for the CSV verion as I am more comfortable with CSV structure:
+Which delivers the data in the form of either HTML or CSV. I opted for the CSV version as I am more comfortable with CSV structure:
 ```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 AgGDP <- fread('http://www.foodsecurityportal.org/api/countries/agriculture-value-ad.csv')
 names(AgGDP)
 ```
-Looking at the structure of the table, the first row should be the column names, lets make that happen. 
+Looking at the structure of the table, the first row should be the column names. Lets make that happen: 
 ```{r}
 #grab the first row with the column names
 names(AgGDP) <- as.matrix(AgGDP[1, ])
@@ -76,34 +78,26 @@ plot + ggtitle("Explore") + theme(axis.text.x = element_blank(), axis.text.y = e
 ###Interpretation 
 From this plot it's evident that there is quite a spread among countries in their agricultural contributions to GDP. The goal here is to find varibles that can predict a countries percentage of GDP coming from agriculture.
 
-In order to combine the two datsets lets aggregate the "Percent of GDP from Agriculture" into an average overtime. This will give us a starting point to explore interesting relationships.
-
 ```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
 ##Making the column names identical, so joining tables by country name is an easier process
 colnames(HDI)[colnames(HDI) == "Country" ] <- "country_name"
 colnames(AgGDP)[colnames(AgGDP) == "Country" ] <- "country_name"
 
 #Join tables by country name and years
-df <- AgGDP %>% full_join(Indicators,by=c("country_name", "Years") )  %>%  na.omit(df) %>% clean_names()
-df <- na.omit(df)
+df <- AgGDP %>% full_join(Indicators,by=c("country_name", "Years") )  %>%  na.omit(df) %>% clean_names() %>% as_tibble(df)
+df <- na.omit(df) 
 names(df)
 head(df)
 ```
-##Lets set up our model
-```{r}
-##FOR df TABLE
-set.seed(789)
-
-# pass in y value (to be predicted)
-sample_selection <- createDataPartition(df$percent_gdp, p = 0.75, list = FALSE)
-  
-train <- df[sample_selection, ]
-test <- df[-sample_selection, ]
-```
-
 
 ##BUILD MODEL FOR ALL VARIABLES::
 ```{r}
+##Lets set up our model
+set.seed(385)
+# pass in y value (to be predicted)
+sample_selection <- createDataPartition(df$percent_gdp, p = 0.75, list = FALSE)
+train <- df[sample_selection, ]
+test <- df[-sample_selection, ]
 train_model <- lm(percent_gdp ~ 
                   dimension 
                   + indicator_id
@@ -117,17 +111,18 @@ summary(train_model)
 
   This summary tells us that the iso3 (officially assigned country codes) is a significant indicatior, which is not meaningful - as the percent of a countries GPD that is Agricultural is directly linked to the country. 
   
-  Lets remove some of the variables to clean up this model. "Years" and "iso" are irrelevant relationships because the country and the year are information that directly link the annual agricultual GDP to a country. Lets also remove dimentions as that vRble has a consistant high P-value across all levels - meaning none of the dimension categories are statistically significant. 
+  Lets remove some of the variables to clean up this model. "Years" and "iso" are irrelevant relationships because the country and the year are information that directly link the annual agricultual GDP to a country. Lets also remove dimentions as that variable has a consistant high P-value across all levels - meaning none of the dimension categories are statistically significant. 
+  
 ###Revised Model
 ```{r}
-train_model <- lm(percent_gdp ~
+revisedModel <- lm(percent_gdp ~
                    indicator_id
                   + hdi_value
                     , data = train)
-summary(train_model)
+summary(revisedModel)
 
 ```
-With this revised model we can see more of the indicators that would be considered statistically significant (low P-Values marked with astericks). There are a total of 74 'indicator id's" and the HDI value which gives the grand total of 75 statistically significant markers for a countries annual percentage of GDP comming from Agriculture. 
+With this revised model we can see more of the indicators that would be considered statistically significant (low P-Values marked with astericks). There are a total of 74 'indicator ids' and the HDI value which gives the grand total of 75 statistically significant markers for a countries annual percentage of GDP comming from Agriculture. 
 
 Lets explore some of these indicators with the lowest P values. 
 
@@ -145,7 +140,7 @@ ggplot(AgToLifeExpectancy, aes(x = hdi_value, y = percent_gdp)) + geom_point() +
 ```
 
 ###Assessment of Graph
-This is not what I expected to see. This graph indicates that as the average life expectancy increases, the percentage of GDP that is Agricultural decreases. Potentially this is due to wealthy countries produce a greater diversity of products that contribute to their overall GDP, whereas developing countries primarily produce agricultural products, raw materials, and labor. More GDP data would be needed to corroborate this assumption. 
+This is not what I expected to see. This graph indicates that as the average life expectancy increases the Agricultural contribution to total GDP decreases. Potentially this is due to wealthy countries producing a greater diversity of products that contribute to their overall GDP, whereas developing countries primarily produce agricultural products, raw materials, and labor. More GDP data would be needed to corroborate this assumption. 
 
 #Significant indicator (indicator id : 58006, P-Value : < 2e-16) 
 ```{r}
@@ -161,7 +156,7 @@ ggplot(AgToLHIV, aes(x = hdi_value, y = percent_gdp)) + geom_point() + geom_smoo
 ```
 
 ###Assessment of Graph
-Thats a funky funky shape. This shape may be skewed by rises and falls of rates of HIV over the years, as each dot represents each country for each year between 1990 and 2017. The graph doesn't appear to communicate anything terribly interesting. Potentially it indicates that the highest HIV prevelence occurred in a country with a lower annual Agricultural percentage of the GDP, but it is to noisy to make any conclusions. 
+Thats a funky funky shape. This shape may be skewed by rises and falls of rates of HIV over the years, as each dot represents each country for each year between 1990 and 2017. The graph doesn't appear to communicate anything terribly interesting. Potentially it indicates that the highest HIV prevelence occurred in a country with a lower annual Agricultural percentage of the GDP, but it is too noisy to make any conclusions. 
 
 
 #Significant indicator (indicator id : 123606, P-Value : < 2e-16) 
@@ -170,15 +165,15 @@ Sig_indicator03 <- subset(Indicators, indicator_id == "123606")
 Sig_indicator03[2,]
 ```
 
-###Percentage of GDP from Agriculture and Estimated gross national income per capita, male (2011 PPP $)
-Our X value here is the HDI value which is the dollar value for the indicator "Estimated gross national income per capita, male (2011 PPP $)". 
+###Percentage of GDP from Agriculture and Estimated gross national income per capita, male
+Our X value here is the HDI value which is the dollar value for the indicator "Estimated gross national income per capita, male". 
 ```{r}
 AgToLMaleIncome <- subset(df, indicator_id == "123606" )
-ggplot(AgToLMaleIncome, aes(x = hdi_value, y = percent_gdp)) + geom_point() + geom_smooth() + ggtitle("Percentages of GDP") + theme(axis.text.x = element_blank(), axis.text.y = element_blank(), axis.ticks = element_blank()) + xlab("Estimated gross national income per capita, male (2011 PPP $)") + ylab("Agricultural Products") 
+ggplot(AgToLMaleIncome, aes(x = hdi_value, y = percent_gdp)) + geom_point() + geom_smooth() + ggtitle("Percentages of GDP") + theme(axis.text.x = element_blank(), axis.text.y = element_blank(), axis.ticks = element_blank()) + xlab("Estimated gross national income per capita, male") + ylab("Agricultural Products") 
 ```
 
 ###Assessment of Graph
-This looks very close to: [ y = 1/x ]. As the percentage of GDP that comes from Agriculture decreases, the per capita male income increases. This seems to have a direct relationship. My assumption would be that a country that has a significant portion of it's GDP comming from Agriculture, has a vast majority of its population working the land. Unfortunately, across the globe, that peope that labor to produce our food, do not make much money.
+This looks very close to: [ y = 1/x ]. As the percentage of GDP that comes from Agriculture decreases, the per capita male income increases. This seems to have a direct relationship. My assumption would be that a country that has a significant portion of it's GDP comming from Agriculture, has a vast majority of its population working the land. Unfortunately, across the globe, people that labor to produce our food do not make much money.
 
 #Significant indicator (indicator id : 69706, P-Value : 2.47e-05)
 ```{r}
@@ -200,7 +195,24 @@ It's a bit noisy at the head, but tightens up at the tail. This graph lines up w
 
 
 ###Model Evaluation
-The revised model has successfully identified a relationship between a countries Agricultural contributions to overall GDP in relation to the overall well-being and health of its citizens. The relations above tend to indicate that as the percentage of GDP that comes from agriculture drops, the well-being increase. 
+The revised model has successfully identified a relationship between a countries Agricultural contributions to  GDP in relation to the  well-being and health of its citizens. The relations above tend to indicate that as the percentage of GDP that comes from agriculture drops, the well-being increase.
+
+#Lets Test The Revised Model 
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+
+predictions <- revisedModel %>% predict(df)
+## Smaller the number the better the prediction.
+# When comparing the predictions to the model When comparing two models, the one that produces the lowest test sample RMSE is the preferred model.
+RMSE <- RMSE(predictions, test$percent_gdp)
+MAE <- MAE(predictions, test$percent_gdp)
+RMSE
+MAE
+# The RMSE and the MAE are measured in the same scale as the outcome variable. Dividing the RMSE by the average value of the outcome variable will give you the prediction error rate, which should be as small as possible:
+RMSE/mean(test$percent_gdp)
+ggplot(df, aes(x=predictions, y =percent_gdp)) + geom_point()
+```
+
+These numbers are not great. To improve the predictions the model could be revised further to remove the levels of the categorical variable 'indicators' that do not have a statistically significant P Value. That would be the next stage of this project to really drill down this model. 
 
 ### TABLES USED CREATING THE MODEL
 ```{r}
