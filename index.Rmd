@@ -40,7 +40,7 @@ output:
 ## Abstract
 The project has been exploration and attempts to tidy the data. So far I have created a subset table for each dimension, then created a tibble for each indicator within a given dimension. In analyzing the data, in delliverable I discovered that the Human Development Index scores vary in units of measure across different   
 
-###Research Questions:
+### Research Questions:
 Studies have made the case that agriculture is a significant factor in a countries populations quality of life. Many areas have been reported as strongly correlated  such as rates of poverty, employment, education level, and population density. In many of these countries the issue is not as simple as needing equipment, training, or supplies. Many charitable programs give food, training, and equipment but this band-aid does not actually lead to a country becoming self-sufficient - rather they become more dependent. You can give a farmer a tractor, but they may not have access to a reliable source of diesel. You can train farmers modern sustainable farming, but the culture of the specific group needs to be considered in order have the specific group intrinsically motivated to implement improvements that fit in their culture and are practical to their lives. 
 
 1. How significant is a countries agricultural production (In terms of producing: not enough, enough, or more than enough for their population) to the overall well being of the population. 
@@ -52,7 +52,7 @@ Below is the link to the current project.
 
 > https://introdsci.github.io/DataScience-JennGriff/deliverable1.html
 
-###Revisions for final deliverable: 
+### Revisions for final deliverable: 
 * Removed all NA values from all tables and tibbles. This revision changed the shape of the data in the plots in deliveable one. Although the shape changed, interestingly ( or maybe out of dumb luck) they still communicated the same interpretation of the data set. 
 
 * Removed many of the tibbles that were originally built, as implied by Dr. Buffardi's comments on the first deliverable. The original intention of breaking up the tibbles further was to have the HDI values be a consistent unit of measure within a single tibble (as some measures are percents, headcounts, dollars, and so on). In order to achieve that it would have been over a hundred tibbles - where that effort would not have benefitted the modeling process. 
@@ -61,11 +61,17 @@ Below is the link to the current project.
 
 > https://introdsci.github.io/DataScience-JennGriff/deliverable2.html
 
-###Revisions for final deliverable: 
+### Revisions for final deliverable: 
+* Removed dead code of the initial (poorly thought out) integration of the Agricultural data by averaging each countries annual percentage across all years, and instead added the Agricultual data across muliple varibles (years, and country on line 87)
 
-### 3. Results and Operationalization
+* Added a revised model that removed the irrelevant varables 'year', and 'iso3' (country code) as well as the variable 'dimension' for its' high P value. 
+
+* Revised insights (graphs and interpretations) to reflect the results of the revised model. In addition to the removed NA, the revised model had a dramatic increase in varibles that indicate stong evidence against the null hypothesis. 
+
+* Revised the Model Evaluation for the revised model
+
+# 3. Results and Operationalization
 
 > https://introdsci.github.io/DataScience-JennGriff/deliverable3.html
 
-In the final stage of this project many revisions were made to the previous deliverables.
 
