@@ -1,13 +1,13 @@
 ---
 title: "Human Development Analysis"
-subtitle: Jenn Griffiths's Data Science Portfolio
+subtitle: Jenn Griffiths Data Science Portfolio
 output:
   html_document:
     df_print: paged
 ---
 #Install Libraries
 These libraries allow us to use the various functions within this document
-```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 #install.packages("tidyverse")
 library(tidyverse)
 library(readr)
@@ -137,7 +137,7 @@ Work_vulnerability <- as_tibble(Work_vulnerability, na.rm = TRUE)
 #Now It's Time For STEP ZERO: Plot The Data
 Nothing gives you a better perspective on your data than plotting your data. 
 
-###Bar Chart across 2 variable
+###Bar Chart across 2 s
 At first glance the two tall bars in the center look as though there is something weird going on here. In looking into the tibble, it is evident that the HDI_value is scoring each indicator with different units. Most scores are in context of percentages, whereas the two tall bars are in terms of headcounts of certain population groups. This leads to the conclusion that these tibbles need to be sliced again based on the indicators in order for the HDI_values in a tibble to be in the same units.
 
 > This plot demonstrates that the HDI value is not a uniform unit of measure. For each dimension (e.g. Education, Poverty, Health ) there are multiple sebcategories, Indicators that use different units of measure. 
@@ -150,7 +150,7 @@ plot + ggtitle("Plot to demonstrate the HDI score is not a uniform unit of measu
 
 ###Bar Chart
 Looking at distributions of a single variable
-The assumption would be that there is an even spread of the amount of indicators across the data set but here we see there a subtle dip then a rise at the far right of the bar graph. 
+The assumption would be that there is an even spread of the amount of indicators across the data set but here we see there a subtle dip then a dramatic rise at the far right of the bar graph. 
 
 Is this due to the missing data being removed? Or possibly some other reason for the uneven distribution?
 
@@ -160,6 +160,7 @@ chart<- ggplot(Poverty, aes(indicator_name), na.rm = TRUE)
 chart + geom_bar() + theme(axis.text.x = element_blank(), axis.text.y = element_blank(), axis.ticks = element_blank())+ ggtitle('Indicators Have a Slight Variation In Occurrences')
 ```
 
+This graph looks at the HDI scores in terms of each country:
 ```{r}
 ggplot(Poverty , aes(x = country_name, y = HDI_value)) + geom_col() + theme(axis.text.x = element_blank(), axis.text.y = element_blank(), axis.ticks = element_blank())+ ggtitle("HDI Scores Among Each Country")
 ```
