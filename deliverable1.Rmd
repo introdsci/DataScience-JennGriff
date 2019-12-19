@@ -7,13 +7,23 @@ output:
 ---
 #Install Libraries
 These libraries allow us to use the various functions within this document
-```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
-#install.packages("tidyverse")
-library(tidyverse)
-library(readr)
-library(dplyr)
-library(tidyr)
-library(ggplot2)
+```{r echo=TRUE, message=FALSE, warning=TRUE, paged.print=FALSE}
+include <- function(library_name){
+  if( !(library_name %in% installed.packages()) )
+    install.packages(library_name) 
+  library(library_name, character.only=TRUE)
+}
+library(data.table)
+#janitor package for cleaning column names
+include("janitor")
+# having errors when trying to load tidyverse
+#include("tidyverse")
+include("caret")
+include("knitr")
+include("readr")
+include("dplyr")
+include("tidyr")
+include("ggplot2")
 ```
 #Load the Data
 Loading the original data into the analysis environment. The original data will not be altered. Versions of the data are created in this environment which can be freely manipulated. If an alteration, such as a removal of a column, was a mistake - one can always reload the original data. 
