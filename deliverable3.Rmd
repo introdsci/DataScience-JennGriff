@@ -1,0 +1,155 @@
+---
+title: "Results and Operationalization"
+author: "Jennifer Griffiths"
+date: "December 03, 2019"
+output:
+  html_document:
+    df_print: paged
+---
+```{r GlobalOptions}
+options(knitr.duplicate.label = 'allow')
+```
+
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE, }
+include3 <- function(library_name){
+  if( !(library_name %in% installed.packages()) )
+    install.packages(library_name) 
+  library(library_name, character.only=TRUE)
+}
+library(data.table)
+#janitor package for cleaning column names
+include3("janitor")
+#include("tidyverse")
+include3("caret")
+include3("knitr")
+
+purl("deliverable2.Rmd", output = "part2.r") # produces r source from rmd
+source("part2.r") # executes the source
+```
+
+#Project Summary
+
+  This Project was aimed at exploring the data available through the United Nations in order to explore the factors that indicate a country being a 'developing country' (a poor country). Are these indicators (e.g. lower literacy rates, higher infant mortality rates, lower expect years of schooling) what cause these countries to be poor, or are these indicators as a result of being a developing country. It is most likely that it is both, a vicious cycle that feeds itself and continually perpetuates the situation. 
+    In this project my aim was to look specifically at what a countries agricultural production could tell us about the health of a country. Here in the United States we are spoiled with a diverse landscape and relatively moderate weather that allows for diverse and robust agricultural production. Could this be a significant factor in what contributes to a countries ability to develop and grow to the point where thay can focus on evolving the human rights and the human health of its citizens. The assumption being that in a country where people are struggling to have their primary needs met (e.g. enough food for the population) people are in survival mode. That is to say, if you are living in the world where your children are dying because of starvation or contaminated water - our Western societal standards do not apply. The morality of stealing, or potentially even killing in juxtoposition to the biological imperative to provide for your family - biology will override ideals in survival situations.
+    
+### The Main Source Of The Data : The United Nations Human Development Index 
+
+  The Human Development Index was developed by the United Nations in order to assess the development of a country on more factors than economics alone. Additional factors include such things as life expectancy at birth, education level, and percentage of the population employed. 
+  The dimensions are the categories of data that may indicate a countries quality human development. The dimensions have sub-categories called 'indicators' (e.g. Dimension: Education, Indicator: Literacy Rate ) The indicator values, across all dimentions are calculated by the United Nations to give a single Human Develoment Index score. For 2019 the top ranked country is Norway, with the United States comming in at number 12.
+
+### Tables Used 
+
+```{r}
+#The original Data Set 
+head(Indicators)
+#The structure of the tibble for the dimension: Education 
+head(Education)
+#The structure of the tibble for the dimension: Poverty
+head(Poverty)
+#Data Set Added in phase 2
+head(AgGDP)
+#Dataframe used for model planning
+head(df)
+```
+
+## Deliverable 1 : Discovery and Data Preparation 
+
+  In deliverable one, I tidied up the Indicators.csv dataset by converting some variables to categorical variables, renaming some variables, and gathering years into a single column. I also explored the data by graphing it to get a better understanding of what was in the data set. 
+Here in the link to deliverable 1: 
+> https://introdsci.github.io/DataScience-JennGriff/deliverable1.html
+
+### Revisons to deliverable 1 
+
+* Removed all NA values from all tables and tibbles. This revision changed the shape of the data in the plots in deliveable one. Although the shape changed, interestingly ( or maybe out of dumb luck) they still communicated the same interpretation of the data set. 
+
+* Removed many of the tibbles that were originally built, as implied by Dr. Buffardi's comments on the first deliverable. The original intention of breaking up the tibbles further was to have the HDI values be a consistent unit of measure within a single tibble (as some measures are percents, headcounts, dollars, and so on). In order to achieve that it would have been over a hundred tibbles - where that effort would not have benefitted the modeling process. 
+
+## Deliverable 2: Model Planning 
+
+In deliverble two I added a new dataset via the Food Security Portal API, 'AgGDP', which has the percentage of a countries GDP comming from the Agricultural sector for the years 1960 to 2016. This data was appended to the Indicators dataset to build a model that would predict a countires agricultural production based on their Human Development Index Scores. 
+
+> https://introdsci.github.io/DataScience-JennGriff/deliverable2.html
+
+### Revisions 
+
+* Removed dead code of the initial (poorly thought out) integration of the Agricultural data by averaging each countries annual percentage across all years, and instead added the Agricultual data across muliple varibles (years, and country on line 87)
+
+* Added a revised model that removed the irrelevant varables 'year', and 'iso3' (country code) as well as the variable 'dimension' for its' high P value. 
+
+* Revised insights (graphs and interpretations) to reflect the results of the revised model. In addition to the removed NA, the revised model had a dramatic increase in varibles that indicate stong evidence against the null hypothesis. 
+
+* Revised the Model Evaluation for the revised model
+
+# Model Evaluation 
+
+With this revised model we can see more of the indicators that would be considered statistically significant (low P-Values marked with astericks). There are a total of 74 'indicator ids' and the HDI value which gives the grand total of 75 statistically significant markers for a countries annual percentage of GDP comming from Agriculture. Some examples of these significant relationships:
+## Life expectancy at birth (years) 
+
+To clarify, the X value will be the HDI score, as that is the value for the indicator id. Here the HDI Score is the average life expectancy in years for a country. 
+```{r}
+AgToLifeExpectancy <- subset(df, indicator_id == "69206" )
+ggplot(AgToLifeExpectancy, aes(x = hdi_value, y = percent_gdp)) + geom_point() + geom_smooth() + ggtitle("Percentages of GDP") + theme(axis.text.x = element_blank(), axis.text.y = element_blank(), axis.ticks = element_blank()) + xlab("Life expectancy at birth (years) HDI Score") + ylab("Agricultural Products") 
+```
+
+### Assessment of Graph 
+
+This is not what I expected to see. This graph indicates that as the average life expectancy increases, the percentage of GDP that is Agricultural decreases. Potentially this is due to wealthy countries produce a greater diversity of products that contribute to their overall GDP, whereas developing countries primarily produce agricultural products, raw materials, and labor. More GDP data would be needed to corroborate this assumption. 
+
+## Estimated gross national income per capita, male 
+
+Our X value here is the HDI value which is the dollar value for the indicator "Estimated gross national income per capita, male". 
+```{r}
+AgToLMaleIncome <- subset(df, indicator_id == "123606" )
+ggplot(AgToLMaleIncome, aes(x = hdi_value, y = percent_gdp)) + geom_point() + geom_smooth() + ggtitle("Percentages of GDP") + theme(axis.text.x = element_blank(), axis.text.y = element_blank(), axis.ticks = element_blank()) + xlab("Estimated gross national income per capita, male") + ylab("Agricultural Products") 
+```
+
+### Assessment of Graph 
+
+This looks very close to: [ y = 1/x ]. As the percentage of GDP that comes from Agriculture decreases, the per capita male income increases. This seems to have a direct relationship. My assumption would be that a country that has a significant portion of it's GDP comming from Agriculture, has a vast majority of its population working the land. Unfortunately, across the globe, that people that labor to produce our food, do not make much money.
+
+# Cross Validation 
+
+The revised model has successfully identified a relationship between a countries Agricultural contributions to overall GDP in relation to the overall well-being and health of its citizens. The relations above tend to indicate that as the percentage of GDP that comes from agriculture drops, the well-being increase. 
+
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+##Lets set up our model
+##FOR df TABLE
+set.seed(385)
+# pass in y value (to be predicted)
+sample_selection <- createDataPartition(df$percent_gdp, p = 0.75, list = FALSE)
+train <- df[sample_selection, ]
+test <- df[-sample_selection, ]
+predictions <- revisedModel %>% predict(df)
+## Smaller the number the better the prediction.
+# When comparing the predictions to the model When comparing two models, the one that produces the lowest test sample RMSE is the preferred model.
+RMSE <- RMSE(predictions, test$percent_gdp)
+MAE <- MAE(predictions, test$percent_gdp)
+RMSE
+MAE
+# The RMSE and the MAE are measured in the same scale as the outcome variable. Dividing the RMSE by the average value of the outcome variable will give you the prediction error rate, which should be as small as possible:
+RMSE/mean(test$percent_gdp)
+ggplot(df, aes(x=predictions, y =percent_gdp)) + geom_point()
+```
+
+These numbers are not great. To improve the predictions the model could be revised further to remove the levels of the categorical variable 'indicators' that do not have a statistically significant P Value. That would be the next stage of this project to really drill down this model.
+
+# Research Questions 
+
+The original research questions were as follows: 
+
+>1. How significant is a countries agricultural production (In terms of producing: not enough, enough, or more than enough for their population) to the overall well being of the population. 
+
+>2. What living standards and practices are common among countries with low output agriculture?
+
+The secondary source of data I was able to obtain does not have the data to answer these questions. The data quantifies a countries agricultural production in terms of the percentage of their GDP. This cannot be used as a metric to determine if a country is producing enough food for its population as some countries rely on food aid to feed the population. Additional data that would be useful for answering these questions would be the quantity produced, quantity consumed, and potentially the quantity that is provided by food aid. 
+
+# Operalization 
+
+  It is very difficult to generate an action for this research. The insights that were gained from this project has led me to believe that there is an interesting relationship between a countries agricultural production and the relationship that has with human health. Generally, interventions upon developing countries by outside entities are wrought with unintentional consequences. For example, well intentioned efforts were made to supply developing countries with food aid. These countries didn't have enough food to feed their citizens, people were starving and the aid was welcomed. The unintentional consequence was that it hurt the local agriculture by making the locally grown goods more expensive than the 'food aid' products. Often this food aid that came from wealthier nations surplusof goods was often held by the coutries and soldin the free market. This hurt the local farmers, and did not have the effect of feeding the popution as itis promoted. 
+
+## Ethical Issues 
+
+  The ideal operalization of these insights would be to support developing countries agricultural growth in a sustainable and economically viable way. That is a difficult thing to actually implement. Subsidies and education on scientific and sustainable agricultural practices have been attempted in developing countries - but if the solution is not culturally and regionaly appropriate it cannot be maintained after the Peace Corps team leaves. 
+  
+  
+  
