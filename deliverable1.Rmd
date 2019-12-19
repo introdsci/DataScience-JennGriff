@@ -5,8 +5,10 @@ output:
   html_document:
     df_print: paged
 ---
-#Install Libraries
+#Install Libraries 
+
 These libraries allow us to use the various functions within this document
+
 ```{r echo=TRUE, message=FALSE, warning=TRUE, paged.print=FALSE}
 include <- function(library_name){
   if( !(library_name %in% installed.packages()) )
